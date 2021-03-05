@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springboot.httpInterface.dao.RyDataLargeMapper">
+
+    <resultMap type="java.util.Map" id="updateTableMsg">
+        <result property="update_time" column="update_time"/>
+        <result property="table_name" column="table_name"/>
+    </resultMap>
+    <select id="getUpdateTableInfo" resultMap="updateTableMsg" parameterType="hashMap">
+        select distinct *from cqyl_ta.ta_data_upt_msg
+        <where>
+            stat = '0'
+            <if test="table_name!=null and table_name!='' ">
+                and table_name = #{table_name}
+            </if>
+        </where>
+        <choose>
+            <when test="limit!=null and limit!=''">
+                limit #{limit}
+            </when>
+            <otherwise>
+                limit 5000
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 分页查询数据Sql头 -->
+    <sql id="pageDataHeader">
+        <if test="endrow != null and endrow != ''">
+            select * from (select  t1.*,@rw:=@rw+1 rw from (
+        </if>
+    </sql>
+
+    <!-- 分页查询数据Sql尾 -->
+    <sql id="pageDataEnd">
+        <if test="endrow != null and endrow != ''">
+            ) t1 ,(select @rw:=0) r) tt where rw >#{start} <![CDATA[ and rw<= #{endrow}]]>
+        </if>
+    </sql>
+
+    <resultMap type="java.util.Map" id="guestMap">
+        <result property="id" column="id"/>
+        <result property="cname" column="CNAME"/>
+        <result property="gateStatus" column="status"/>
+        <result property="cnt" column="cnt"/>
+        <result property="ename" column="ENAME"/>
+        <result property="roleType" column="ROLETYPE"/>
+        <result property="certificateType" column="CERTIFICATETYPE"/>
+        <result property="certificateNum" column="CERTIFICATENUM"/>
+        <result property="certificateLevel" column="CERTIFICATELEVEL"/>
+    </resultMap>
+    <select id="getAllGuest" resultMap="guestMap" parameterType="hashMap">
+        <include refid="pageDataHeader"/>
+        select (SELECT count(id) from cqyl_pre.gate_expo_audi_info) cnt ,
+        a.CNAME CNAME,
+        a.ENAME ENAME,
+        a.ROLETYPE ROLETYPE,
+        a.CERTIFICATETYPE CERTIFICATETYPE,
+        a.CERTIFICATENUM CERTIFICATENUM,
+        a.CERTIFICATELEVEL CERTIFICATELEVEL,
+        a.id id ,case when b.USERID is not null and trim(b.USERID)!= '' then '1' else '0' end status
+        from cqyl_pre.gate_expo_audi_info a
+        left join cqyl_pre.gate_gate_evt b on a.ID=b.USERID
+        <if test="checkTime!=null">
+            and instr(b.CHECKTIME,#{checkTime})>0
+        </if>
+        <if test="BeginTime!=null">
+            and concat (concat(date_format(b.checktime,'%Y-%m-%d'),' '),#{BeginTime}) <![CDATA[<]]>  date_format(b.checktime,'%Y-%m-%d %H:%i')
+        </if>
+        <if test="EndTime!=null">
+            and concat(concat(date_format(b.checktime,'%Y-%m-%d'),' '),#{EndTime}) >= date_format(b.checktime,'%Y-%m-%d %H:%i')
+        </if>
+        <where>
+            a.ROLETYPE = '7'
+
+        </where>
+        order by case when b.CHECKTIME is not null then b.checktime else a.id end
+        <if test="limit!=null and limit!=''">
+            limit #{limit}
+        </if>
+        <include refid="pageDataEnd"/>
+    </select>
+    <delete id ="deleteUpdateTableInfo" parameterType="java.util.Map">
+        DELETE from cqyl_ta.ta_data_upt_msg
+        <where>
+            table_name = #{table_name}
+            <if test="update_time!=null">
+                and update_time = #{update_time}
+            </if>
+            <if test="stat!=null">
+                and  stat = #{stat}
+            </if>
+        </where>
+    </delete>
+
+    <resultMap type="java.util.Map" id="weather">
+        <result property="dt" column="ppi"/>
+        <result property="weat" column="weat"/>
+        <result property="tempt" column="tempt"/>
+    </resultMap>
+    <select id="getWeather" resultMap="weather" parameterType="hashMap">
+        select *from cqyl_pre.weather_weat_fore
+        <where>
+            instr(ppi,DATE_FORMAT(DATE_ADD(now(),INTERVAL 1 day),'%Y%m%d'))>0
+        </where>
+        <choose>
+            <when test="limit!=null and limit!=''">
+                limit #{limit}
+            </when>
+            <otherwise>
+                limit 100
+            </otherwise>
+        </choose>
+    </select>
+
+    <resultMap type="com.springboot.httpInterface.entity.RyDataLarge" id="ryData">
+        <result property="rptId" column="RPT_ID"/>
+        <result property="rptNm" column="RPT_NM"/>
+        <result property="indexId" column="INDX_ID" />
+        <result property="indexNm" column="INDX_NM" />
+        <result property="groupId" column="GRP_ID" />
+        <result property="groupNm" column="GRP_NM" />
+        <result property="indexVal" column="INDX_VAL" />
+    </resultMap>
+
+    <select id="getRyDataById" resultMap="ryData" parameterType="hashMap">
+      select *from cqyl_rd.T80_RD_LARG_SCRN_INDX
+        <where>
+            indx_id IN
+            <foreach item = "item" index = "index" collection="indexId"
+                     open = "("  separator=","  close =")"  >
+                ${item}
+            </foreach>
+
+            <if test="groupId!=null and groupId!= ''">
+                and GRP_ID = ${groupId}
+            </if>
+            and STATT_DT=date_format(now(),'%Y-%m-%d')
+        </where>
+
+    </select>
+
+    <resultMap type="java.util.Map" id="routeMap">
+        <result property="routeNm" column="Rout_Nm"/>
+        <result property="termStat" column="Term_Stat"/>
+    </resultMap>
+
+    <select id="getAllRoute" resultMap="routeMap" parameterType="hashMap">
+      select * from cqyl_rd.T80_RD_ROUTE
+        <choose>
+            <when test="limit!=null and limit!=''">
+                limit #{limit}
+            </when>
+            <otherwise>
+                limit 100
+            </otherwise>
+        </choose>
+    </select>
+
+    <resultMap type="java.util.Map" id="parkMap">
+        <result property="platNo" column="Plat_No"/>
+        <result property="drvInTm" column="Drv_In_Tm"/>
+        <result property="startOutTm" column="Start_Out_Tm"/>
+    </resultMap>
+
+    <select id="getAllPark" resultMap="parkMap" parameterType="hashMap">
+        select * from (select plat_no,date_format(Drv_In_Tm,'%Y-%m-%d %T') Drv_In_Tm ,date_format(Start_Out_Tm,'%Y-%m-%d %T') Start_Out_Tm
+        from cqyl_rd.T80_RD_PARK_EVT
+        <where>
+            instr(Data_Tm ,date_format(now(),'%Y-%m-%d'))>0
+        </where>
+        order by Data_Tm desc) a
+        <choose>
+            <when test="limit!=null and limit!=''">
+                limit #{limit}
+            </when>
+            <otherwise>
+                limit 10
+            </otherwise>
+        </choose>
+    </select>
+
+    <resultMap type="java.util.Map" id="webServiceMap">
+        <result property="tpHpzl" column="TP_HPZL"/>
+        <result property="tpHphm" column="TP_HPHM"/>
+        <result property="tpTxrqq" column="TP_TXRQQ"/>
+        <result property="tpTxrqz" column="TP_TXRQZ"/>
+        <result property="tpTxfw" column="TP_TXFW"/>
+        <result property="tpTxyy" column="TP_TXYY"/>
+        <result property="tpCzlx" column="TP_CZLX"/>
+        <result property="tpValue" column="TP_VALUE"/>
+    </resultMap>
+    <select id="getWebServiceData" resultMap="webServiceMap" parameterType="hashMap">
+        select TP_HPZL,
+        TP_HPHM,
+        TP_TXRQQ,
+        TP_TXRQZ,
+        TP_TXFW,
+        case when trim(TP_TXYY)='' or TP_TXYY is null then '预约车辆' ELSE TP_TXYY end TP_TXYY ,
+        TP_CZLX,
+        TP_VALUE
+        from cqyl_pre.TP_VEH_INFO
+        <where>
+            (tp_stat = '0' or tp_stat is null or trim(tp_stat) = '') -- 0:未发送或发送失败 1：发送成功
+            and  (tp_msg is null or trim(tp_msg) = '')
+        </where>
+        order by TP_TXRQQ
+        <if test="limit!=null and limit!=''">
+            limit #{limit}
+        </if>
+    </select>
+    <update id="updateWebService" parameterType="java.util.Map">
+        <if test="tpHpzl!=null and tpHphm!=null and tpTxrqq!=null and tpTxrqz!=null">
+            update cqyl_pre.TP_VEH_INFO
+            <set>
+              tp_stat = #{tpStat}
+              <if test="tpValue!=null">
+                ,tp_value = #{tpValue}
+              </if>
+                <if test="tpMsg!=null">
+                    ,tp_msg = #{tpMsg}
+                </if>
+            </set>
+            where tp_hpzl =#{tpHpzl} and
+            tp_hphm = #{tpHphm} and
+            tp_txrqq = #{tpTxrqq} and
+            (tp_stat = '0'or tp_stat is null or trim(tp_stat) = '')
+            and (tp_msg is null or trim(tp_msg) = '')
+        </if>
+    </update>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+<mapper namespace="com.springboot.httpInterface.dao.JobAndTriggerMapper">
+    
+    <select id="getJobAndTriggerDetails" resultType="com.springboot.httpInterface.entity.JobAndTrigger">
+			SELECT
+				qrtz_job_details.JOB_NAME,
+				qrtz_job_details.JOB_GROUP,
+				qrtz_job_details.JOB_CLASS_NAME,
+				qrtz_triggers.TRIGGER_NAME,
+				qrtz_triggers.TRIGGER_GROUP,
+				qrtz_cron_triggers.CRON_EXPRESSION,
+				qrtz_cron_triggers.TIME_ZONE_ID,
+				qrtz_triggers.TRIGGER_STATE,
+				date_format(FROM_UNIXTIME(qrtz_triggers.NEXT_FIRE_TIME/1000),'%Y-%m-%d %T') TRIGGER_NEXT_FIRE_TIME
+			FROM
+				quartz.qrtz_job_details qrtz_job_details
+			JOIN quartz.qrtz_triggers qrtz_triggers
+			JOIN quartz.qrtz_cron_triggers ON qrtz_job_details.JOB_NAME = qrtz_triggers.JOB_NAME
+			AND qrtz_triggers.TRIGGER_NAME = qrtz_cron_triggers.TRIGGER_NAME
+			AND qrtz_triggers.TRIGGER_GROUP = qrtz_cron_triggers.TRIGGER_GROUP
+    </select>
+    
+</mapper>

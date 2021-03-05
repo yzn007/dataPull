@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springboot.httpInterface.dao.RouteMapper">
+    <resultMap type="com.springboot.httpInterface.entity.Route" id="route">
+        <result property="startSiteName" column="StartSite_Name"/>
+        <result property="startSiteLatitude" column="StartSite_Latitude"/>
+        <result property="startSiteLongitude" column="StartSite_Longitude" />
+        <result property="endSiteName" column="EndSite_Name" />
+        <result property="endSiteLatitude" column="EndSite_Latitude" />
+        <result property="endSiteLongitude" column="EndSite_Longitude" />
+        <result property="dataTm" column="DATA_TM" />
+    </resultMap>
+
+    <select id="getAllRoute" resultMap="route">
+      select *from cqyl_pre.BUS_ROUTE
+    </select>
+    
+    <delete id="deleAllRec" parameterType="hashMap">
+        DELETE  from  ${table_name}
+    </delete>
+
+</mapper>

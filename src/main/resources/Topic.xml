@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+    <!-- topic列表： 名称 表名(多表用;分割) 是否有效 生产者编码(多个用;分割) 是否删除后再插入 是否清空表 是否静态数据 静态数据访问url-->
+
+    <!-- 闸机事件(1次/5s) -->
+    <topics name="Per5SJob">
+        <!-- 闸机事件 -->
+        <topic name="GATE_GATE_EVT" table="cqyl_pre.GATE_GATE_EVT;cqyl_pre.GATE_GATE_TMP_EVT" valid="true" textCode="0102" isDelete="false" isTruncate="false" isStatic="false"/>
+    </topics>
+
+    <!-- 停车场预约 (1次/10s)-->
+    <topics name="Per10SJob">
+        <!-- 车位预约信息/车辆驶入事件/车辆驶出事件 -->
+        <topic name="PARK_CONSM_INFO" table="cqyl_pre.PARK_PARK_SPC_RESV_INFO;cqyl_pre.PARK_VEHIC_DRV_IN_EVT;cqyl_pre.PARK_VEHIC_START_OUT_EVT" valid="true" textCode="0304;0302;0303" isDelete="true;false;false" isTruncate="false" isStatic="false"/>
+        <!-- 车辆信息 -->
+        <!-- 车辆位置信息 -->
+        <topic name="BUS_VEHIC_LCTN_MSG" table="cqyl_pre.BUS_VEHIC_LCTN_MSG" valid="true" textCode="0201" isDelete="false" isTruncate="false" isStatic="false"/>
+        <!-- 车辆进出信息 -->
+        <topic name="BUS_VEHIC_ARRV_DEPRT_MSG" table="cqyl_pre.BUS_VEHIC_ARRV_DEPRT_MSG" valid="true" textCode="0202" isDelete="false" isTruncate="false" isStatic="false"/>
+
+
+    </topics>
+
+    <!--停车场信息/历史（1次/30s)-->
+    <topics name="Per30SJob">
+        <!-- 停车场信息/历史 -->
+        <topic name="PARK_PARKING_LOT" table="cqyl_pre.PARK_PARKING_LOT;cqyl_pre.PARK_PARKING_LOT_HIS" valid="true" textCode="0301" isDelete="true;false" isTruncate="false;false" isStatic="false"/>
+    </topics>
+
+    <!-- 公交车辆、位置、闸机注册、停车场支付情况(1次/1min)-->
+    <topics name="topics">
+
+        <!-- 停车支付情况 -->
+        <topic name="PARK_PAY_INFO" table="cqyl_pre.PARK_PAY_INFO" valid="true" textCode="0305" isDelete="true" isTruncate="false" isStatic="false"/>
+       <!-- 闸机 -->
+        <!-- 闸机参展人与信息 /活动信息-->
+        <topic name="GATE_EXPO_AUDI_INFO" table="cqyl_pre.GATE_EXPO_AUDI_INFO;cqyl_ta.T80_TA_EXPO_AUDI_INFO" valid="true" textCode="0101" isDelete="true" isTruncate="false" isStatic="false"/>
+
+    </topics>
+
+    <!-- 图聚、设备 (1次/1hour)-->
+    <topics name="Per1HourJob">
+
+    </topics>
+
+    <!-- 公交静态数据 (1次/3hour) -->
+    <topics name="StaticJob">
+        <!-- topic列表： 名称 表名(多表用;分割) 是否有效 生产者编码(多个用;分割) 是否删除后再插入 是否清空表 是否静态数据 静态数据访问url-->
+        <!-- 令牌信息 -->
+        <topic name="BUS_ACCESS_TOKEN" table="cqyl_pre.BUS_ACCESS_TOKEN" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
+        <!-- 线路 -->
+        <topic name="BUS_ROUTE" table="cqyl_pre.BUS_ROUTE" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Route/GetRoutes"/>
+       <!-- 站点 -->
+        <topic name="BUS_STATION" table="cqyl_pre.BUS_STATION" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Route/GetTrack"/>
+        <!-- 车辆 -->
+        <topic name="BUS_VEHICLE" table="cqyl_pre.BUS_VEHICLE" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Vehicle/Info"/>
+        <!-- 线路计划时间 -->
+        <topic name="BUS_ROUTE_DISPT" table="cqyl_pre.BUS_ROUTE_DISPT" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Route/Times"/>
+
+    </topics>
+
+    <topics name = "StaticJobPer1Min">
+        <!-- 令牌信息 -->
+        <topic name="BUS_ACCESS_TOKEN" table="cqyl_pre.BUS_ACCESS_TOKEN" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
+        <!-- 线路车辆 -->
+        <topic name="BUS_ROUTE_VEHICLE" table="cqyl_pre.BUS_ROUTE_VEHICLE" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Route/GetVehicles"/>
+    </topics>
+
+    <topics name="GateJob">
+        <!-- topic列表： 名称 表名(多表用;分割) 是否有效 生产者编码(多个用;分割) 是否删除后再插入 是否清空表 是否静态数据 静态数据访问url-->
+
+        <!-- 展商 -->
+        <topic name="T80_TA_EXHIBITOR" table="cqyl_ta.T80_TA_EXHIBITOR" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="false"/>
+
+    </topics>
+</root>
+
+
+
+
+

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springboot.httpInterface.dao.PersonMapper">
+    <!--<resultMap type="com.springboot.httpInterface.entity.Person" id="personI">-->
+        <!--<result property="id" column="id"/>-->
+        <!--<result property="name" column="name"/>-->
+        <!--<result property="sex" column="sex"/>-->
+        <!--<result property="age" column="age"/>-->
+    <!--</resultMap>-->
+
+    <select id="selectAllPerson" resultType="com.springboot.httpInterface.entity.Person">
+        SELECT * FROM person
+    </select>
+
+    <update id="updatePerson" parameterType="com.springboot.httpInterface.entity.Person">
+        update pserson
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null">
+                name = #{name},
+            </if>
+            age = #{age},
+            <if test="sex != null and sex.length()>0">
+                sex = #{sex}
+            </if>
+        </trim>
+    </update>
+
+    <insert id="insertPerson" parameterType="com.springboot.httpInterface.entity.Person">
+        INSERT INTO person
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,name,
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="age != null">
+                age,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            #{id},#{name},
+            <if test="sex != null">
+                #{sex},
+            </if>
+            <if test="age != null">
+                #{age}
+            </if>
+        </trim>
+    </insert>
+</mapper>

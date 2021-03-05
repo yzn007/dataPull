@@ -1,0 +1,97 @@
+http:
+  port: 8083
+server:
+  ssl:
+    key-alias: _.chongqingexpo.com
+    key-store: classpath:chongqingexpo.com.jks
+    key-store-password: 93zgk1o96j
+    key-store-type: JKS
+    enabled: true
+  port: 10101
+  tomcat:
+    accept-count: 500
+    max-threads: 200
+    max-connections: 10000
+    max-http-post-size: -1
+    min-spare-threads: 50
+
+
+  connection-timeout: 100
+
+
+
+
+
+
+spring:
+    datasource:
+        name: test
+        url: jdbc:mysql://localhost:3307/quartz?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+        username: root
+        password: 123456
+        # 使用druid数据源
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat
+        maxActive: 50
+        initialSize: 10
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: false
+        maxOpenPreparedStatements: -1
+    mvc:
+      view:
+        prefix: /
+        suffix: .jsp
+      static-path-pattern: /**
+
+    quartz:
+      properties:
+        org:
+          quartz:
+            scheduler:
+              instanceName: MyScheduler
+              instanceId: AUTO
+            jobStore:
+              class: org.quartz.impl.jdbcjobstore.JobStoreTX
+              driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+              tablePrefix: QRTZ_
+#              isClustered: true
+#              clusterCheckinInterval: 10000
+              useProperties: false
+            threadPool:
+              class: org.quartz.simpl.SimpleThreadPool
+              threadCount: 1000
+              threadPriority: 5
+              threadsInheritContextClassLoaderOfInitializingThread: true
+      job-store-type: jdbc
+      jdbc:
+        initialize-schema: embedded
+
+
+#pagehelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.springboot.httpInterface.entity
+logging:
+  pattern:
+    level: '%5p'
+  path: /log
+  level:
+    root: debug
+    com.springboot.common: info
+
+
