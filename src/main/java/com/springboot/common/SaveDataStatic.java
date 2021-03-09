@@ -1,6 +1,8 @@
 package com.springboot.common;
 
+import com.alibaba.fastjson.JSONObject;
 import com.springboot.scala.SaveCosumerData;
+import org.apache.commons.lang3.StringUtils;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
 
@@ -17,6 +19,7 @@ public class SaveDataStatic extends Thread {
     private String table = "web_data_profil";//表名
     private String isDelInsert = "false";
     private String isTrancate = "false";
+    private String objectType = "objectType";
     private List<String> listJsonString = new ArrayList<>();
 
 final static Logger logger =
@@ -45,12 +48,27 @@ final static Logger logger =
         try {
 //            int k = 0;
             for(String jsonString:listJsonString) {
-                String[] array = JsonObjectToAttach.getJsonList(jsonString, null);
+                String[] array = JsonObjectToAttach.getJsonList(jsonString, "data",true);
                 if (array != null) {
                     //表名固定了，根据实际情况修改
                     for (int m = 0; m < this.table.split(";").length; m++) {
+
+                        JSONObject jsonObject = null;
+                        try {
+                            String [] jsonArray = JsonObjectToAttach.getJsonList(jsonString, "data",false);
+                            jsonObject = JSONObject.parseObject(jsonArray[0]);
+                            if (jsonObject.get(objectType) != null &&  !jsonObject.get(objectType).equals(JsonObjectToAttach.staticTableRelation.get(this.table.split(";")[m])))
+                                continue;
+                        } catch (Exception exx) {
+
+                        }
+                        //处理json key重复字段
+                        String [] newArray = JsonObjectToAttach.processMutikeys(array,this.table.split(";")[m],"");
+
+
+
                         //删除当前表数据，保留历史表数据
-                        String[] sql = JsonObjectToAttach.getBatchStatement(array, table.split(";")[m], "", "",
+                        String[] sql = JsonObjectToAttach.getBatchStatement(newArray, table.split(";")[m], "", "",
                                 !(isDelInsert.indexOf(";") > 0 ? isDelInsert.split(";")[m] : isDelInsert).equalsIgnoreCase("false"), new HashMap(),
                                 !(isTrancate.indexOf(";") > 0 ? isTrancate.split(";")[m] : isTrancate).equalsIgnoreCase("false"));
 
@@ -105,24 +123,439 @@ final static Logger logger =
 //        System.out.println(config);
 //        new KafkaSaveData("bingfu","web_data_profil").start();
 
-        String jsonString = "{\n" +
-                "  \"tx_code\": \"0102\",\n" +
-                "  \"results\": [\n" +
-                "    {\n" +
-                "      \"activityName\": \"参加活动1\",\n" +
-                "      \"cardNo\": \"渝B03789\",\n" +
-                "      \"barCode\": \"1\",\n" +
-                "      \"checkTime\": \"2018-06-01 10:11:00\",\n" +
-                "      \"accessPoint\": \"北3\"\n" +
-                "    }\n" +
-                "  ]\n" +
+        String tokenJsonString = "{\n" +
+                "  \"code\": \"1\",\n" +
+                "  \"message\": \"success\",\n" +
+                "  \"data\": {\n" +
+                "    \"interrupt\": false,\n" +
+                "    \"timestamp\": 1608536849696,\n" +
+                "    \"tokenId\": \"6197eceb-3648-4023-9692-6182ff1b38cf\",\n" +
+                "    \"systemId\": \"20201221124515046-C4AC-CD36D1AD2\",\n" +
+                "    \"systemCode\": \"testdemo\",\n" +
+                "    \"systemName\": \"测试demo\",\n" +
+                "    \"schemas\": [\n" +
+                "      {\n" +
+                "        \"objectType\": \"TARGET_ORGANIZATION\",\n" +
+                "        \"objectId\": \"20201221124517089-815D-D3C4C7AA6\",\n" +
+                "        \"objectCode\": \"testdemo_Org\",\n" +
+                "        \"objectName\": \"测试demo机构\",\n" +
+                "        \"objectAttributes\": [\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"_parent\",\n" +
+                "            \"name\": \"父机构\",\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"_organization\",\n" +
+                "            \"name\": \"机构\",\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"code\",\n" +
+                "            \"name\": \"代码\",\n" +
+                "            \"length\": 128,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"name\",\n" +
+                "            \"name\": \"名称\",\n" +
+                "            \"length\": 128,\n" +
+                "            \"isRequired\": true,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"fullname\",\n" +
+                "            \"name\": \"机构全名\",\n" +
+                "            \"length\": 128,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"description\",\n" +
+                "            \"name\": \"描述\",\n" +
+                "            \"length\": 512,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"INTEGER\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"sequence\",\n" +
+                "            \"name\": \"序号\",\n" +
+                "            \"length\": 10,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"BOOLEAN\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"isDisabled\",\n" +
+                "            \"name\": \"禁用\",\n" +
+                "            \"length\": 1,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"TIMESTAMP\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"createAt\",\n" +
+                "            \"name\": \"创建日期\",\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"TIMESTAMP\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"updateAt\",\n" +
+                "            \"name\": \"更新日期\",\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"email\",\n" +
+                "            \"name\": \"电子邮箱\",\n" +
+                "            \"length\": 128,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"linkAddress\",\n" +
+                "            \"name\": \"联系地址\",\n" +
+                "            \"length\": 256,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"type\",\n" +
+                "            \"name\": \"类型\",\n" +
+                "            \"length\": 32,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false,\n" +
+                "            \"lookupDefinitionCode\": \"system.organization.type\"\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"objectType\": \"TARGET_ACCOUNT\",\n" +
+                "        \"objectId\": \"20201221124519685-9FB3-6D79C00A8\",\n" +
+                "        \"objectCode\": \"testdemo_TargetAccount\",\n" +
+                "        \"objectName\": \"测试demo目标账号\",\n" +
+                "        \"objectAttributes\": [\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"_user\",\n" +
+                "            \"name\": \"用户\",\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"_organization\",\n" +
+                "            \"name\": \"所属机构\",\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"username\",\n" +
+                "            \"name\": \"账号名\",\n" +
+                "            \"length\": 64,\n" +
+                "            \"isRequired\": true,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"password\",\n" +
+                "            \"name\": \"密码\",\n" +
+                "            \"length\": 64,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": true\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"fullname\",\n" +
+                "            \"name\": \"姓名\",\n" +
+                "            \"length\": 64,\n" +
+                "            \"isRequired\": true,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"BOOLEAN\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"isDisabled\",\n" +
+                "            \"name\": \"禁用\",\n" +
+                "            \"length\": 1,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"BOOLEAN\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"isLocked\",\n" +
+                "            \"name\": \"锁定\",\n" +
+                "            \"length\": 1,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"TIMESTAMP\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"createAt\",\n" +
+                "            \"name\": \"创建日期\",\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"TIMESTAMP\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"updateAt\",\n" +
+                "            \"name\": \"更新日期\",\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"BOOLEAN\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"isSystem\",\n" +
+                "            \"name\": \"系统账号\",\n" +
+                "            \"length\": 1,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"BOOLEAN\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"isPublic\",\n" +
+                "            \"name\": \"公共账号\",\n" +
+                "            \"length\": 1,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"BOOLEAN\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"isMaster\",\n" +
+                "            \"name\": \"主账号\",\n" +
+                "            \"length\": 1,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"email\",\n" +
+                "            \"name\": \"邮箱\",\n" +
+                "            \"length\": 128,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"employeeNo\",\n" +
+                "            \"name\": \"员工号\",\n" +
+                "            \"length\": 32,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"mobile\",\n" +
+                "            \"name\": \"手机号\",\n" +
+                "            \"length\": 32,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"type\": \"STRING\",\n" +
+                "            \"provisionMethod\": \"AUTO\",\n" +
+                "            \"reconcileMethod\": \"AUTO\",\n" +
+                "            \"code\": \"sex\",\n" +
+                "            \"name\": \"性别\",\n" +
+                "            \"length\": 32,\n" +
+                "            \"isRequired\": false,\n" +
+                "            \"isUniqued\": false,\n" +
+                "            \"isMultiValue\": false,\n" +
+                "            \"isEncrypted\": false\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"enableSync\": true,\n" +
+                "    \"enablePull\": true,\n" +
+                "    \"enablePush\": true,\n" +
+                "    \"objectCodes4Push\": [\n" +
+                "      \"testdemo_Org\",\n" +
+                "      \"testdemo_TargetAccount\"\n" +
+                "    ],\n" +
+                "    \"debug\": false\n" +
+                "  }\n" +
                 "}";
 
+        String pullJsonString = "{\n" +
+                "  \"code\": \"1\",\n" +
+                "  \"message\": \"success\",\n" +
+                "  \"data\": {\n" +
+                "    \"interrupt\": false,\n" +
+                "    \"timestamp\": 1608537202840,\n" +
+                "    \"taskId\": \"20201221154223919-14E7-734636690\",\n" +
+                "    \"objectType\": \"TARGET_ACCOUNT\",\n" +
+                "    \"objectCode\": \"testdemo_TargetAccount\",\n" +
+                "    \"effectOn\": \"CREATED\",\n" +
+                "    \"data\": {\n" +
+                "      \"_user\": \"zhangsan\",\n" +
+                "      \"_organization\": null,\n" +
+                "      \"username\": \"zhangsan\",\n" +
+                "      \"password\": null,\n" +
+                "      \"fullname\": \"张三测试\",\n" +
+                "      \"isDisabled\": false,\n" +
+                "      \"isLocked\": false,\n" +
+                "      \"createAt\": \"2020-12-21 15:42:23.000\",\n" +
+                "      \"updateAt\": \"2020-12-21 15:42:23.000\",\n" +
+                "      \"isSystem\": false,\n" +
+                "      \"isPublic\": false,\n" +
+                "      \"isMaster\": true,\n" +
+                "      \"email\": \"zhangsan@crecg.com\",\n" +
+                "      \"employeeNo\": null,\n" +
+                "      \"mobile\": \"13247703738\",\n" +
+                "      \"sex\": \"1\"\n" +
+                "    },\n" +
+                "    \"id\": \"20201221154223828-3236-DD9FB740B\"\n" +
+                "  }\n" +
+                "}\n";
+
+
+        String id = "";
+        JSONObject data = null;
+        try{
+            data = JSONObject.parseObject(pullJsonString);
+            JSONObject jsonObject =JSONObject.parseObject(data.get("data").toString());
+
+            id = jsonObject.get("id").toString();
+            JSONObject target = JSONObject.parseObject(jsonObject.get("data").toString());
+            target.put("id",id);
+            jsonObject.put("data",target);
+            data.put("data",jsonObject);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
         List<String> listJson = new ArrayList<>();
-        listJson.add(jsonString);
+        listJson.add(data.toJSONString());
 
         //取得静态数据表
-        Map<String, String> topicM = JsonObjectToAttach.getValidProperties("StaticJob", null, null,true);
+        Map<String, String> topicM = JsonObjectToAttach.getValidProperties("UserPullJob", null, "",true);
         ExecutorService executorService = Executors.newFixedThreadPool(NUM_PROCESS);
         for (Map.Entry<String, String> m : topicM.entrySet()) {
             String[] tabAndMark = null;

@@ -40,7 +40,7 @@ public class StaticJob implements BaseJob {
     static Map<String, String> topicS = new HashMap<>();
 
     private String jsonStr = "";
-    private String table = "BUS_VEHIC_LCTN_MSG";
+    private String table = "GTGCDM.PUB_UNIFIED_IDENTITY_USER";
     //令牌地址
     static String accessUrl = "http://183.66.65.155:9002/api/Token?appid=001&secret=ABCDEFG";
 

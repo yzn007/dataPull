@@ -44,16 +44,29 @@ public class JsonObjectToAttach {
      * 取得json数组
      * @param jsonString
      * @param dataName
+     * @param maxDeep
      * @return
      */
-    public static String[] getJsonList(String jsonString,String dataName) {
+    public static String[] getJsonList(String jsonString,String dataName,boolean maxDeep) {
         List<String> listS = null;
         String dataJsonListNm = "results";
         if(!StringUtils.isEmpty(dataName))
            dataJsonListNm = dataName;
         try {
             JSONObject jsonObject = JSONObject.parseObject(jsonString);
-            listS = JSONArray.parseArray(jsonObject.get(dataJsonListNm).toString(), String.class);
+            if(maxDeep){
+                //相同结果节点，true取得最深
+                while(true) {
+                    try {
+                        jsonObject = JSONObject.parseObject(jsonObject.get(dataJsonListNm).toString());
+                    }catch (Exception ex){
+                        break;
+                    }
+                }
+                listS = JSONArray.parseArray(jsonObject.toString(), String.class);
+            }else
+                listS = JSONArray.parseArray(jsonObject.get(dataJsonListNm).toString(), String.class);
+
             String[] a = new String[listS.size()];
             int i = 0;
             for (String r : listS) {
@@ -65,11 +78,36 @@ public class JsonObjectToAttach {
             Object obj = null;
             try{
                 jsonObject = JSONObject.parseObject(jsonString);
+                if(maxDeep){
+                    //相同结果节点，true取得最深
+                    while(true) {
+                        try {
+                            jsonObject = JSONObject.parseObject(jsonObject.get(dataJsonListNm).toString());
+                        }catch (Exception ex){
+                            break;
+                        }
+                    }
+                }
                 obj = jsonObject.get(dataJsonListNm);
                 if (obj==null)
                     obj = jsonObject;
             }catch (Exception ex){
                 listS = JSONArray.parseArray(jsonString, String.class);
+
+                if(maxDeep){
+                    //相同结果节点，true取得最深
+                    Map m = new HashMap();
+                    m.put(dataJsonListNm,listS);
+                    jsonObject = new JSONObject(m);
+                    while(true) {
+                        try {
+                            jsonObject = JSONObject.parseObject(jsonObject.get(dataJsonListNm).toString());
+                        }catch (Exception exb){
+                            break;
+                        }
+                    }
+                    listS = JSONArray.parseArray(jsonObject.toString(), String.class);
+                }
                 String[] a = new String[listS.size()];
                 int i = 0;
                 for (String r : listS) {
@@ -126,6 +164,7 @@ public class JsonObjectToAttach {
                 subStr = subStr.substring(i+1>subStr.length()?subStr.length():i+1);
                 if(StringUtils.isEmpty(subStr))
                     break;
+                firstC +=i+1;
                 firstC +=i+1;
                 if(++k%2==0 && firstC<firstInx)//保留前两个
                     firstS = firstC;
@@ -403,6 +442,92 @@ public class JsonObjectToAttach {
         return rets;
     }
 
+
+    /**
+     * 重复字段处理
+     * @param array
+     * @param table
+     * @param tmpFile
+     * @return
+     * @throws IOException
+     */
+    public static String[] processMutikeys(String []array, String table, String tmpFile ) throws IOException {
+
+        String spChr = "#";
+        String fileName = "TableTpl.xml";
+        if (!StringUtils.isEmpty(tmpFile))
+            fileName = tmpFile;
+
+        Map<String, String> m = new HashMap();
+
+        try {
+
+//            String path = Thread.currentThread().getClass().getResource("/").getPath() + fileName;
+//            String path = ResourceUtils.getURL("classpath:").getPath()+fileName;
+            if(tplDocument==null)
+                tplDocument = parseDom4j(fileName);
+            Element root = tplDocument.getRootElement();
+            for (Iterator iterator = root.elementIterator(); iterator.hasNext(); ) {
+                Element tblEle = (Element) iterator.next();
+                String tableName = tblEle.attribute(0).getValue();
+                boolean isContain = false;
+                if(tableName.indexOf(table)>-1 && (StringUtils.isEmpty(tableName.substring(tableName.indexOf(table)+table.length(),
+                        tableName.indexOf(table)+table.length()+1>tableName.length()?tableName.length():tableName.indexOf(table)+table.length()+1))
+                        ||tableName.substring(tableName.indexOf(table)+table.length(),
+                        tableName.indexOf(table)+table.length()+1>tableName.length()?tableName.length():tableName.indexOf(table)+table.length()+1).equals(";")))
+                    isContain = true;
+                if (isContain || tableName.equals(table)) {
+                    for (Element e : tblEle.elements()) {
+                        m.put(e.attribute(1).getValue(), e.attribute(0).getValue()+
+                                    (!StringUtils.isEmpty(e.getStringValue())?
+                                            spChr+e.getStringValue():""));
+                    }
+                }
+            }
+
+//
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String[] arrayNew = new String[array.length];
+        int i = 0;
+        for(String jsonStr :array){
+            JSONObject jsonObject= JSONObject.parseObject(jsonStr);
+            for(Map.Entry keyset:m.entrySet()){
+                if(null!=jsonObject.get(keyset.getValue())){
+                    jsonObject.remove(keyset.getKey());
+                }
+            }
+            jsonStr = jsonObject.toJSONString();
+            arrayNew[i++] = jsonStr;
+        }
+        return arrayNew;
+//        int j = 0;
+//        if(StringUtils.isEmpty(tm)) {
+//            rets = new String[whereStr.size()];
+//        }
+//        else {
+//            rets = new String[whereStr.size() + 1];
+//            j = 1;
+//            //替换表字段，防止特殊字符
+//            String []keys = tm.split(",");
+//            for(String key:keys){
+//                tm = replace(tm,key,"`"+key+"`","");
+//            }
+//            rets[0] = tm;
+//        }
+//
+//        for( ;j<rets.length;j++){
+//            if(StringUtils.isEmpty(tm))
+//                rets [j] = whereStr.get(j);
+//            else
+//                rets [j] = whereStr.get(j-1);
+//        }
+//        return m;
+    }
+
     /**
      * 替换块内字符，防止替换局部字符串
      * @param orignal
@@ -662,6 +787,14 @@ public class JsonObjectToAttach {
             add("cqyl_pre.PARK_PARK_SPC_RESV_INFO");}
     };
 
+    static final Map staticTableRelation = new HashMap(){
+        {
+            put("GTGCDM.PUB_UNIFIED_IDENTITY_USER","TARGET_ACCOUNT");
+            put("GTGCDM.PUB_UNIFIED_IDENTITY_ORG","TARGET_ORGANIZATION");
+        }
+
+    };
+
 
     /**
      * 生成插入或删除语句
@@ -760,7 +893,7 @@ public class JsonObjectToAttach {
                 //递归调用
 
                 for (Map.Entry<String,String> e : noContainCols.entrySet()) {
-                    String[] bb = getBatchStatement(getJsonList(json, e.getKey()), e.getValue(), null,tmpLink, isModify, keyWhere,isTruncate);
+                    String[] bb = getBatchStatement(getJsonList(json, e.getKey(),false), e.getValue(), null,tmpLink, isModify, keyWhere,isTruncate);
                     if (bb == null) {//子表无数据都返回空
                         return null;
                     }
@@ -824,7 +957,7 @@ public class JsonObjectToAttach {
                 "  ]\n" +
                 "}";
         String tablePre = "cqyl_ta.T80_TA_EXPO_AUDI_INFO";
-        String [] array = getJsonList(jsonValue,"");
+        String [] array = getJsonList(jsonValue,"",true);
         Map<String, String> config = new HashMap<String, String>();
         try {
             config.putAll(ReadPropertiesUtils.readConfig("project.properties"));

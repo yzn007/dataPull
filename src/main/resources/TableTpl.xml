@@ -2,151 +2,185 @@
 <root>
 
     <!-- 参展人员信息/活动信息 -->
-    <!-- 子表配置参数 json字段 子表list表名 关联主表字段-->
-    <table name="cqyl_pre.GATE_EXPO_AUDI_INFO">
+    <!-- 子表配置参数 id:数据库字段名 ref:json字段名 [list]:子表list表名 linkId:关联主表字段-->
+    <!-- 用户信息 -->
+    <table name="GTGCDM.PUB_UNIFIED_IDENTITY_USER">
         <column id="id" ref="id">id = id</column>
-        <!--<column id="id" ref="id">id = roleType + id</column>-->
-        <!--<column id="datas" ref="[list]cqyl_pre.GATE_Prtc_Act_Info" linkId="id"/>-->
+        <column id="username" ref="_user"/>
+        <column id="organizationId" ref="_organization"/>
+        <column id="user_name" ref="username"/>
+        <!--<column id="" ref="password"/>-->
+        <column id="full_name" ref="fullname"/>
+        <column id="is_disable" ref="isDisabled"/>
+        <column id="is_locked" ref="isLocked"/>
+        <column id="create_at" ref="createAt"/>
+        <column id="update_at" ref="updateAt"/>
+        <column id="is_system" ref="isSystem"/>
+        <column id="is_public" ref="isPublic"/>
+        <column id="is_master" ref="isMaster"/>
+        <!--<column id="" ref="email"/>-->
+        <column id="employee_id" ref="employeeNo"/>
+        <column id="phone" ref="mobile"/>
+        <!--<column id="" ref="sex"/>-->
+        <!--<column id="" ref=""/>-->
+        <!--<column id="" ref=""/>-->
+        <!--<column id="" ref=""/>-->
     </table>
 
-    <table name="cqyl_ta.T80_TA_EXPO_AUDI_INFO">
-        <column id="ID" ref="id">ID = id</column>
-        <column id="CN_NM" ref="cname"></column>
-        <column id="EN_NM" ref="ename"></column>
-        <column id="NATION" ref="nationality"></column>
-        <column id="CERT_NUM" ref="certificateNum"></column>
-        <column id="GENDER" ref="gender"></column>
-        <column id="MOBL_NO" ref="phone"></column>
-        <column id="WORK_CORP" ref="institution"></column>
-        <column id="POS" ref="position"></column>
-        <column id="ROLE_TYP" ref="roleType"></column>
-        <column id="CONTR_TEL" ref="vapPhone"></column>
-        <column id="CONTR" ref="vapName"></column>
-        <column id="GUEST_GRADE" ref="certificateLevel"></column>
-        <column id="IS_VIST" ref="isMeeting"></column>
-        <column id="DOCK_ORG_USR_NM" ref="dockingOrgUserName"></column>
-        <column id="DOCK_ORG_USR_MOBL" ref="dockingOrgUserphone"></column>
-        <column id="DOCK_ORG_NM" ref="dockingOrgName"></column>
-        <column id="VIST_TM" ref="visitDate"></column>
-        <column id="TRVL_WAY" ref="travel"></column>
-        <column id="CERT_TYP" ref="certificateType"></column>
-        <column id="CERT_HEAD_URL" ref="headUrl"></column>
+    <!-- 机构信息 -->
+    <table name="">
+        <column id="" ref=""/>
+        <column id="" ref=""/>
+        <column id="" ref=""/>
+        <column id="" ref=""/>
+        <column id="" ref=""/>
+        <column id="" ref=""/>
     </table>
-
-    <!--<table name="cqyl_pre.GATE_Prtc_Act_Info">-->
-        <!--<column id="act_Id" ref="id">id = id</column>-->
+    <!--<table name="cqyl_pre.GATE_EXPO_AUDI_INFO">-->
+        <!--<column id="id" ref="id">id = id</column>-->
+        <!--&lt;!&ndash;<column id="id" ref="id">id = roleType + id</column>&ndash;&gt;-->
+        <!--&lt;!&ndash;<column id="datas" ref="[list]cqyl_pre.GATE_Prtc_Act_Info" linkId="id"/>&ndash;&gt;-->
     <!--</table>-->
 
-    <!-- 停车场信息 -->
-    <table name="cqyl_pre.PARK_PARKING_LOT">
-        <column id="Park_Lot_Regn_ID" ref="Park_Lot_Regn_ID">Park_Lot_Regn_ID = Park_Lot_Regn_ID</column>
-        <column id="Remn_Park_Spc_Qty" ref="Remn_Park_Spc_Cnt"/>
-    </table>
+    <!--<table name="cqyl_ta.T80_TA_EXPO_AUDI_INFO">-->
+        <!--<column id="ID" ref="id">ID = id</column>-->
+        <!--<column id="CN_NM" ref="cname"></column>-->
+        <!--<column id="EN_NM" ref="ename"></column>-->
+        <!--<column id="NATION" ref="nationality"></column>-->
+        <!--<column id="CERT_NUM" ref="certificateNum"></column>-->
+        <!--<column id="GENDER" ref="gender"></column>-->
+        <!--<column id="MOBL_NO" ref="phone"></column>-->
+        <!--<column id="WORK_CORP" ref="institution"></column>-->
+        <!--<column id="POS" ref="position"></column>-->
+        <!--<column id="ROLE_TYP" ref="roleType"></column>-->
+        <!--<column id="CONTR_TEL" ref="vapPhone"></column>-->
+        <!--<column id="CONTR" ref="vapName"></column>-->
+        <!--<column id="GUEST_GRADE" ref="certificateLevel"></column>-->
+        <!--<column id="IS_VIST" ref="isMeeting"></column>-->
+        <!--<column id="DOCK_ORG_USR_NM" ref="dockingOrgUserName"></column>-->
+        <!--<column id="DOCK_ORG_USR_MOBL" ref="dockingOrgUserphone"></column>-->
+        <!--<column id="DOCK_ORG_NM" ref="dockingOrgName"></column>-->
+        <!--<column id="VIST_TM" ref="visitDate"></column>-->
+        <!--<column id="TRVL_WAY" ref="travel"></column>-->
+        <!--<column id="CERT_TYP" ref="certificateType"></column>-->
+        <!--<column id="CERT_HEAD_URL" ref="headUrl"></column>-->
+    <!--</table>-->
 
-    <table name="cqyl_pre.PARK_PARKING_LOT_HIS">
-        <column id="Remn_Park_Spc_Qty" ref="Remn_Park_Spc_Cnt"/>
-    </table>
+    <!--&lt;!&ndash;<table name="cqyl_pre.GATE_Prtc_Act_Info">&ndash;&gt;-->
+        <!--&lt;!&ndash;<column id="act_Id" ref="id">id = id</column>&ndash;&gt;-->
+    <!--&lt;!&ndash;</table>&ndash;&gt;-->
 
-    <table name="cqyl_pre.PARK_PAY_INFO">
-        <column id="PAY_ID" ref="PAY_ID">PAY_ID = PAY_ID</column>
-    </table>
+    <!--&lt;!&ndash; 停车场信息 &ndash;&gt;-->
+    <!--<table name="cqyl_pre.PARK_PARKING_LOT">-->
+        <!--<column id="Park_Lot_Regn_ID" ref="Park_Lot_Regn_ID">Park_Lot_Regn_ID = Park_Lot_Regn_ID</column>-->
+        <!--<column id="Remn_Park_Spc_Qty" ref="Remn_Park_Spc_Cnt"/>-->
+    <!--</table>-->
 
-    <table name="cqyl_pre.PARK_PARK_SPC_RESV_INFO">
-        <column id="Resv_ID" ref="Resv_ID">Resv_ID = Resv_ID</column>
-    </table>
+    <!--<table name="cqyl_pre.PARK_PARKING_LOT_HIS">-->
+        <!--<column id="Remn_Park_Spc_Qty" ref="Remn_Park_Spc_Cnt"/>-->
+    <!--</table>-->
 
-    <!-- 车辆位置信息 -->
-    <table name="cqyl_pre.BUS_VEHIC_LCTN_MSG">
-        <column id="OwnRoute_ID" ref="OwnRoute.ID"></column>
-        <column id="OwnRoute_Name" ref="OwnRoute.Name"></column>
-        <column id="OwnRoute_Code" ref="OwnRoute.Code"></column>
-        <column id="RunRoute_ID" ref="RunRoute.ID"></column>
-        <column id="RunRoute_Name" ref="RunRoute.Name"></column>
-        <column id="RunRoute_Code" ref="RunRoute.Code"></column>
-    </table>
-    <!-- 车辆进出站信息 -->
-    <table name="cqyl_pre.BUS_VEHIC_ARRV_DEPRT_MSG">
-        <column id="OwnRoute_ID" ref="OwnRoute.ID"></column>
-        <column id="OwnRoute_Name" ref="OwnRoute.Name"></column>
-        <column id="OwnRoute_Code" ref="OwnRoute.Code"></column>
-        <column id="RunRoute_ID" ref="RunRoute.ID"></column>
-        <column id="RunRoute_Name" ref="RunRoute.Name"></column>
-        <column id="RunRoute_Code" ref="RunRoute.Code"></column>
-        <column id="InoutTyp" ref="Inout"></column>
-    </table>
-    <!--  线路车辆 -->
-    <table name="cqyl_pre.BUS_ROUTE_VEHICLE">
-        <column id="routeId" ref="RouteId">routeId = RouteId</column>
-        <column id="Position_Lat" ref="Position.Lat"></column>
-        <column id="Position_Lng" ref="Position.Lng"></column>
-        <column id="Position_Direct" ref="Position.Direct"></column>
-        <column id="Position_Site" ref="Position.Site"></column>
-    </table>
+    <!--<table name="cqyl_pre.PARK_PAY_INFO">-->
+        <!--<column id="PAY_ID" ref="PAY_ID">PAY_ID = PAY_ID</column>-->
+    <!--</table>-->
 
-    <!-- 站点 -->
-    <table name="cqyl_pre.BUS_STATION">
-    <column id="RouteId" ref="RouteId">RouteId = RouteId</column>
-    <column id="Sites" ref="[list]cqyl_pre.BUS_ROUTE_STATION" linkId="RouteId"/>
-</table>
+    <!--<table name="cqyl_pre.PARK_PARK_SPC_RESV_INFO">-->
+        <!--<column id="Resv_ID" ref="Resv_ID">Resv_ID = Resv_ID</column>-->
+    <!--</table>-->
 
-    <table name="cqyl_pre.BUS_ROUTE_STATION">
-        <column id="RouteId" ref="RouteId">RouteId = RouteId</column>
-        <column id="Sites_Id" ref="Id"></column>
-        <column id="Sites_Name" ref="Name"></column>
-        <column id="Sites_Direct" ref="Direct"></column>
-        <column id="Sites_Num" ref="Num"></column>
-        <column id="Sites_Lat" ref="Lat"></column>
-        <column id="Sites_Lng" ref="Lng"></column>
-        <column id="Sites_Milage" ref="Milage"></column>
-        <column id="Sites_Attr" ref="Attr"></column>
-    </table>
+    <!--&lt;!&ndash; 车辆位置信息 &ndash;&gt;-->
+    <!--<table name="cqyl_pre.BUS_VEHIC_LCTN_MSG">-->
+        <!--<column id="OwnRoute_ID" ref="OwnRoute.ID"></column>-->
+        <!--<column id="OwnRoute_Name" ref="OwnRoute.Name"></column>-->
+        <!--<column id="OwnRoute_Code" ref="OwnRoute.Code"></column>-->
+        <!--<column id="RunRoute_ID" ref="RunRoute.ID"></column>-->
+        <!--<column id="RunRoute_Name" ref="RunRoute.Name"></column>-->
+        <!--<column id="RunRoute_Code" ref="RunRoute.Code"></column>-->
+    <!--</table>-->
+    <!--&lt;!&ndash; 车辆进出站信息 &ndash;&gt;-->
+    <!--<table name="cqyl_pre.BUS_VEHIC_ARRV_DEPRT_MSG">-->
+        <!--<column id="OwnRoute_ID" ref="OwnRoute.ID"></column>-->
+        <!--<column id="OwnRoute_Name" ref="OwnRoute.Name"></column>-->
+        <!--<column id="OwnRoute_Code" ref="OwnRoute.Code"></column>-->
+        <!--<column id="RunRoute_ID" ref="RunRoute.ID"></column>-->
+        <!--<column id="RunRoute_Name" ref="RunRoute.Name"></column>-->
+        <!--<column id="RunRoute_Code" ref="RunRoute.Code"></column>-->
+        <!--<column id="InoutTyp" ref="Inout"></column>-->
+    <!--</table>-->
+    <!--&lt;!&ndash;  线路车辆 &ndash;&gt;-->
+    <!--<table name="cqyl_pre.BUS_ROUTE_VEHICLE">-->
+        <!--<column id="routeId" ref="RouteId">routeId = RouteId</column>-->
+        <!--<column id="Position_Lat" ref="Position.Lat"></column>-->
+        <!--<column id="Position_Lng" ref="Position.Lng"></column>-->
+        <!--<column id="Position_Direct" ref="Position.Direct"></column>-->
+        <!--<column id="Position_Site" ref="Position.Site"></column>-->
+    <!--</table>-->
 
-    <!-- 线路 -->
-    <table name="cqyl_pre.BUS_ROUTE">
-        <column id="StartSite_Name" ref="StartSite.Name"></column>
-        <column id="StartSite_Latitude" ref="StartSite.Latitude"></column>
-        <column id="StartSite_Longitude" ref="StartSite.Longitude"></column>
-        <column id="EndSite_Name" ref="EndSite.Name"></column>
-        <column id="EndSite_Latitude" ref="EndSite.Latitude"></column>
-        <column id="EndSite_Longitude" ref="EndSite.Longitude"></column>
-    </table>
+    <!--&lt;!&ndash; 站点 &ndash;&gt;-->
+    <!--<table name="cqyl_pre.BUS_STATION">-->
+    <!--<column id="RouteId" ref="RouteId">RouteId = RouteId</column>-->
+        <!--<column id="data_Tm" ref="dataTm"></column>-->
+    <!--<column id="Sites" ref="[list]cqyl_pre.BUS_ROUTE_STATION" linkId="RouteId"/>-->
+<!--</table>-->
 
-    <!-- 车辆信息 -->
-    <table name="cqyl_pre.BUS_VEHICLE">
-        <column id="id" ref="VehId">id = VehId</column>
-        <column id="OwnRoute_ID" ref="OwnRoute.ID"></column>
-        <column id="OwnRoute_Code" ref="OwnRoute.Code"></column>
-        <column id="OwnRoute_Name" ref="OwnRoute.Name"></column>
-        <column id="RunRoute_ID" ref="RunRoute.ID"></column>
-        <column id="RunRoute_Code" ref="RunRoute.Code"></column>
-        <column id="RunRoute_Name" ref="RunRoute.Name"></column>
-    </table>
+    <!--<table name="cqyl_pre.BUS_ROUTE_STATION">-->
+        <!--<column id="RouteId" ref="RouteId">RouteId = RouteId</column>-->
+        <!--<column id="Sites_Id" ref="Id"></column>-->
+        <!--<column id="Sites_Name" ref="Name"></column>-->
+        <!--<column id="Sites_Direct" ref="Direct"></column>-->
+        <!--<column id="Sites_Num" ref="Num"></column>-->
+        <!--<column id="Sites_Lat" ref="Lat"></column>-->
+        <!--<column id="Sites_Lng" ref="Lng"></column>-->
+        <!--<column id="Sites_Milage" ref="Milage"></column>-->
+        <!--<column id="Sites_Attr" ref="Attr"></column>-->
+    <!--</table>-->
 
-    <!-- 车辆计划运行 -->
-    <table name="cqyl_pre.BUS_ROUTE_DISPT">
-        <column id="RouteId" ref="RouteId">RouteId = RouteId</column>
-        <column id="Times" ref="[list]cqyl_pre.BUS_ROUTE_DISPT_DTL" linkId="RouteId"/>
-    </table>
+    <!--&lt;!&ndash; 线路 &ndash;&gt;-->
+    <!--<table name="cqyl_pre.BUS_ROUTE">-->
+        <!--<column id="StartSite_Name" ref="StartSite.Name"></column>-->
+        <!--<column id="StartSite_Latitude" ref="StartSite.Latitude"></column>-->
+        <!--<column id="StartSite_Longitude" ref="StartSite.Longitude"></column>-->
+        <!--<column id="EndSite_Name" ref="EndSite.Name"></column>-->
+        <!--<column id="EndSite_Latitude" ref="EndSite.Latitude"></column>-->
+        <!--<column id="EndSite_Longitude" ref="EndSite.Longitude"></column>-->
+    <!--</table>-->
 
-    <!-- 车辆计划运行明细 -->
-    <table name="cqyl_pre.BUS_ROUTE_DISPT_DTL">
-        <column id="RouteId" ref="RouteId">RouteId = RouteId</column>
-        <column id="Times_Time" ref="Time"></column>
-        <column id="Times_PlateNum" ref="PlateNum"></column>
-        <column id="Times_VehNum" ref="VehNum"></column>
-    </table>
+    <!--&lt;!&ndash; 车辆信息 &ndash;&gt;-->
+    <!--<table name="cqyl_pre.BUS_VEHICLE">-->
+        <!--<column id="id" ref="VehId">id = VehId</column>-->
+        <!--<column id="OwnRoute_ID" ref="OwnRoute.ID"></column>-->
+        <!--<column id="OwnRoute_Code" ref="OwnRoute.Code"></column>-->
+        <!--<column id="OwnRoute_Name" ref="OwnRoute.Name"></column>-->
+        <!--<column id="RunRoute_ID" ref="RunRoute.ID"></column>-->
+        <!--<column id="RunRoute_Code" ref="RunRoute.Code"></column>-->
+        <!--<column id="RunRoute_Name" ref="RunRoute.Name"></column>-->
+    <!--</table>-->
 
-    <!-- 展商-->
-    <table name="cqyl_ta.T80_TA_EXHIBITOR">
-        <column id="EXHTR_ID" ref="id"> EXHTR_ID = id</column>
-        <column id="EXHTR_NM" ref="organizationName"></column>
-        <column id="FLR_ID" ref="flid"></column>
-        <column id="FLR_NM" ref="floorName"></column>
-        <column id="VEN_NM" ref="exhibitionHall"></column>
-        <column id="EXHTR_LCTN_NO" ref="exhibitionPosition"></column>
-        <column id="LCTN_ID" ref="featureId"></column>
-        <column id="BDID" ref="bdid"></column>
-    </table>
+    <!--&lt;!&ndash; 车辆计划运行 &ndash;&gt;-->
+    <!--<table name="cqyl_pre.BUS_ROUTE_DISPT">-->
+        <!--<column id="RouteId" ref="RouteId">RouteId = RouteId</column>-->
+        <!--<column id="Times" ref="[list]cqyl_pre.BUS_ROUTE_DISPT_DTL" linkId="RouteId"/>-->
+    <!--</table>-->
+
+    <!--&lt;!&ndash; 车辆计划运行明细 &ndash;&gt;-->
+    <!--<table name="cqyl_pre.BUS_ROUTE_DISPT_DTL">-->
+        <!--<column id="RouteId" ref="RouteId">RouteId = RouteId</column>-->
+        <!--<column id="Times_Time" ref="Time"></column>-->
+        <!--<column id="Times_PlateNum" ref="PlateNum"></column>-->
+        <!--<column id="Times_VehNum" ref="VehNum"></column>-->
+    <!--</table>-->
+
+    <!--&lt;!&ndash; 展商&ndash;&gt;-->
+    <!--<table name="cqyl_ta.T80_TA_EXHIBITOR">-->
+        <!--<column id="EXHTR_ID" ref="id"> EXHTR_ID = id</column>-->
+        <!--<column id="EXHTR_NM" ref="organizationName"></column>-->
+        <!--<column id="FLR_ID" ref="flid"></column>-->
+        <!--<column id="FLR_NM" ref="floorName"></column>-->
+        <!--<column id="VEN_NM" ref="exhibitionHall"></column>-->
+        <!--<column id="EXHTR_LCTN_NO" ref="exhibitionPosition"></column>-->
+        <!--<column id="LCTN_ID" ref="featureId"></column>-->
+        <!--<column id="BDID" ref="bdid"></column>-->
+    <!--</table>-->
 
 </root>
 

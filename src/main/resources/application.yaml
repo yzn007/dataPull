@@ -91,7 +91,7 @@ logging:
     level: '%5p'
   path: /log
   level:
-    root: debug
+    root: error
     com.springboot.common: info
 
 

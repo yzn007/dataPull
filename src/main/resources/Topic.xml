@@ -47,16 +47,24 @@
     <!-- 公交静态数据 (1次/3hour) -->
     <topics name="StaticJob">
         <!-- topic列表： 名称 表名(多表用;分割) 是否有效 生产者编码(多个用;分割) 是否删除后再插入 是否清空表 是否静态数据 静态数据访问url-->
-        <!-- 令牌信息 -->
-        <topic name="BUS_ACCESS_TOKEN" table="cqyl_pre.BUS_ACCESS_TOKEN" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
-        <!-- 线路 -->
-        <topic name="BUS_ROUTE" table="cqyl_pre.BUS_ROUTE" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Route/GetRoutes"/>
-       <!-- 站点 -->
-        <topic name="BUS_STATION" table="cqyl_pre.BUS_STATION" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Route/GetTrack"/>
-        <!-- 车辆 -->
-        <topic name="BUS_VEHICLE" table="cqyl_pre.BUS_VEHICLE" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Vehicle/Info"/>
-        <!-- 线路计划时间 -->
-        <topic name="BUS_ROUTE_DISPT" table="cqyl_pre.BUS_ROUTE_DISPT" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Route/Times"/>
+        <!--&lt;!&ndash; 令牌信息 &ndash;&gt;-->
+        <!--<topic name="BUS_ACCESS_TOKEN" table="cqyl_pre.BUS_ACCESS_TOKEN" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>-->
+        <!--&lt;!&ndash; 线路 &ndash;&gt;-->
+        <!--<topic name="BUS_ROUTE" table="cqyl_pre.BUS_ROUTE" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Route/GetRoutes"/>-->
+       <!--&lt;!&ndash; 站点 &ndash;&gt;-->
+        <!--<topic name="BUS_STATION" table="cqyl_pre.BUS_STATION" valid="true" textCode="01" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Route/GetTrack"/>-->
+        <!--&lt;!&ndash; 车辆 &ndash;&gt;-->
+        <!--<topic name="BUS_VEHICLE" table="cqyl_pre.BUS_VEHICLE" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Vehicle/Info"/>-->
+        <!--&lt;!&ndash; 线路计划时间 &ndash;&gt;-->
+        <!--<topic name="BUS_ROUTE_DISPT" table="cqyl_pre.BUS_ROUTE_DISPT" valid="true" textCode="" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Route/Times"/>-->
+    </topics>
+
+    <topics name="UserPullJob">
+        <!-- 用户信息 -->
+        <topic name="USER_INFO" table="GTGCDM.PUB_UNIFIED_IDENTITY_USER" valid="true" textCode="USERINFO" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
+
+        <!-- 机构信息 -->
+        <topic name="ORGANIZATION" table="GTGCDM.PUB_UNIFIED_IDENTITY_ORG" valid="true" textCode="ORGANIZATION" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
 
     </topics>
 

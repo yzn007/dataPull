@@ -111,9 +111,9 @@ public class GateJob implements BaseJob {
 
                     List<String> listJson = new ArrayList<>();
                     String getJson = httpServiceTest.getJsonData(url, "utf-8", "bdid", "04NL14", false);
-                    String[] array = JsonObjectToAttach.getJsonList(getJson, "data");
+                    String[] array = JsonObjectToAttach.getJsonList(getJson, "data",false);
                     if(array.length>0){
-                        array = JsonObjectToAttach.getJsonList(array[0], "exhibitionList");
+                        array = JsonObjectToAttach.getJsonList(array[0], "exhibitionList",false);
                     }
                     for(String f : array) {
                         JSONObject object = JSONObject.parseObject(f);

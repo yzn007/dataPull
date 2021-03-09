@@ -104,7 +104,7 @@ public class KafkaSaveData extends Thread {
 //                System.out.println("接收到: " + record.offset() + record.key() + record.value());
                 String[] nameValue = {String.valueOf(record.offset()), record.value()};
                 try {
-                    String[] array = JsonObjectToAttach.getJsonList(record.value(), null);
+                    String[] array = JsonObjectToAttach.getJsonList(record.value(), null,false);
                     if (array != null) {
                         //表名固定了，根据实际情况修改
                         for (int m = 0; m < this.table.split(";").length; m++) {
