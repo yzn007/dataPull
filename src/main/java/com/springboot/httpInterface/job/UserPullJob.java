@@ -28,7 +28,7 @@ public class UserPullJob implements BaseJob {
     private static Logger _log = LoggerFactory.getLogger(UserPullJob.class);
 
     final static int NUM_PROCESS = 6;
-    static Map<String, String> config = new HashMap<String, String>();
+//    static Map<String, String> config = new HashMap<String, String>();
 
     //取得静态表
     static Map<String, String> topicS = new HashMap<>();
@@ -39,14 +39,14 @@ public class UserPullJob implements BaseJob {
     static String accessUrl = "http://183.66.65.155:9002/api/Token?appid=001&secret=ABCDEFG";
 
     final String topicName = UserPullJob.class.getSimpleName();
-    final String configName = "project.properties";
+//    final String configName = "project.properties";
 
     HttpServiceTest httpServiceTest = null;
 
     public UserPullJob() {
-        try {
-            if (config.size() == 0)
-                config.putAll(ReadPropertiesUtils.readConfig(configName));
+//        try {
+//            if (config.size() == 0)
+//                config.putAll(ReadPropertiesUtils.readConfig(configName));
             if (topicS.size() == 0)
                 //取得静态表
                 topicS = JsonObjectToAttach.getValidProperties(topicName, null, null, true);
@@ -54,21 +54,25 @@ public class UserPullJob implements BaseJob {
 //            HttpServiceTest httpServiceTest = new HttpServiceTest();
 //            this.jsonStr = httpServiceTest.getJsonData("http://localhost/httpService/sendGetData?RayData=CurrTotlCnt", "utf-8");
 
-        } catch (IOException e) {
-            System.out.println(e.toString());
-        }
+//        } catch (IOException e) {
+//            System.out.println(e.toString());
+//        }
     }
 
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-
-        PullUtil pullUtil = new PullUtil("http://10.2.38.90:9095/cn.crec.group.sso.integration.api.json", "cn.crec.group.lc");
+        String systemCode = JsonObjectToAttach.config.get("systemCode").toString();
+        String integrationKey = JsonObjectToAttach.config.get("integrationKey").toString();
+        String urlInject = JsonObjectToAttach.config.get("urlInject").toString();
+        String conCode = JsonObjectToAttach.config.get("conCode").toString();
+        PullUtil pullUtil = new PullUtil(urlInject, conCode);
         OutParam outParam = new OutParam();
 
         //systemCode:对应《6.2术语解释》的SYSTEMCODE，一体化平台申请
         //integrationKey:集成客户端会自动使用MD5加密，由统一身份安全平台提供
-        outParam = pullUtil.login("1000113", "ZP1FqYx_QxVWDqI8KTdmProtY4cF4KgaVAChBwGSW-U");
+
+        outParam = pullUtil.login(systemCode,integrationKey);
         if (outParam.getStatus() == 1) {
             System.out.println("登录成功");
         } else {
@@ -133,6 +137,37 @@ public class UserPullJob implements BaseJob {
                 String url = tabAndMark[3];
 
 
+//                String pullJsonString = "{\n" +
+//                        "  \"code\": \"1\",\n" +
+//                        "  \"message\": \"success\",\n" +
+//                        "  \"data\": {\n" +
+//                        "    \"interrupt\": false,\n" +
+//                        "    \"timestamp\": 1608537202840,\n" +
+//                        "    \"taskId\": \"20201221154223919-14E7-734636690\",\n" +
+//                        "    \"objectType\": \"TARGET_ACCOUNT\",\n" +
+//                        "    \"objectCode\": \"testdemo_TargetAccount\",\n" +
+//                        "    \"effectOn\": \"CREATED\",\n" +
+//                        "    \"data\": {\n" +
+//                        "      \"_user\": \"zhangsan\",\n" +
+//                        "      \"_organization\": null,\n" +
+//                        "      \"username\": \"zhangsan\",\n" +
+//                        "      \"password\": null,\n" +
+//                        "      \"fullname\": \"张三测试\",\n" +
+//                        "      \"isDisabled\": false,\n" +
+//                        "      \"isLocked\": false,\n" +
+//                        "      \"createAt\": \"2020-12-21 15:42:23.000\",\n" +
+//                        "      \"updateAt\": \"2020-12-21 15:42:23.000\",\n" +
+//                        "      \"isSystem\": false,\n" +
+//                        "      \"isPublic\": false,\n" +
+//                        "      \"isMaster\": true,\n" +
+//                        "      \"email\": \"zhangsan@crecg.com\",\n" +
+//                        "      \"employeeNo\": null,\n" +
+//                        "      \"mobile\": \"13247703738\",\n" +
+//                        "      \"sex\": \"1\"\n" +
+//                        "    },\n" +
+//                        "    \"id\": \"20201221154223828-3236-DD9FB740B\"\n" +
+//                        "  }\n" +
+//                        "}";
                 String pullJsonString = "{\n" +
                         "  \"code\": \"1\",\n" +
                         "  \"message\": \"success\",\n" +
@@ -140,28 +175,20 @@ public class UserPullJob implements BaseJob {
                         "    \"interrupt\": false,\n" +
                         "    \"timestamp\": 1608537202840,\n" +
                         "    \"taskId\": \"20201221154223919-14E7-734636690\",\n" +
-                        "    \"objectType\": \"TARGET_ACCOUNT\",\n" +
-                        "    \"objectCode\": \"testdemo_TargetAccount\",\n" +
+                        "    \"objectType\": \"TARGET_ORGANIZATION\",\n" +
+                        "    \"objectCode\": \"testdemo_TargetOragnization\",\n" +
                         "    \"effectOn\": \"CREATED\",\n" +
                         "    \"data\": {\n" +
-                        "      \"_user\": \"zhangsan\",\n" +
-                        "      \"_organization\": null,\n" +
-                        "      \"username\": \"zhangsan\",\n" +
-                        "      \"password\": null,\n" +
-                        "      \"fullname\": \"张三测试\",\n" +
+                        "      \"parentId\": null,\n" +
+                        "      \"fullName\": \"机构一\",\n" +
+                        "      \"orgName\": \"test\",\n" +
                         "      \"isDisabled\": false,\n" +
-                        "      \"isLocked\": false,\n" +
                         "      \"createAt\": \"2020-12-21 15:42:23.000\",\n" +
                         "      \"updateAt\": \"2020-12-21 15:42:23.000\",\n" +
-                        "      \"isSystem\": false,\n" +
-                        "      \"isPublic\": false,\n" +
-                        "      \"isMaster\": true,\n" +
-                        "      \"email\": \"zhangsan@crecg.com\",\n" +
-                        "      \"employeeNo\": null,\n" +
-                        "      \"mobile\": \"13247703738\",\n" +
-                        "      \"sex\": \"1\"\n" +
+                        "      \"effectOn\": true,\n" +
+                        "      \"orgFullName\": \"测试机构全名\"\n" +
                         "    },\n" +
-                        "    \"id\": \"20201221154223828-3236-DD9FB740B\"\n" +
+                        "    \"id\": \"20201221154223828-3236-DD9FB740C\"\n" +
                         "  }\n" +
                         "}";
 

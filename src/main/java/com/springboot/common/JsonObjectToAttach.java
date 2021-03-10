@@ -10,9 +10,12 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.*;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
+import sun.security.krb5.Config;
 
 import java.io.*;
 import java.util.*;
+
+import static org.apache.logging.log4j.ThreadContext.putAll;
 
 /**
  * Created by yzn00 on 2019/6/27.
@@ -797,45 +800,59 @@ public class JsonObjectToAttach {
         return ret;
     }
 
+    //project.properties
+   public static final Map config ;
+    static {
+        Map map = new HashMap();
+        try {
+            map.putAll(ReadPropertiesUtils.readConfig("project.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        config = Collections.unmodifiableMap(map);
+
+    }
+
+
+
+
     public static void  main(String args[]){
         String stat = "";
         stat = replace("vehnum_routeid,times_routeid,time,vehnum","time1","times_id",",");
         String  jsonValue ="{\n" +
-                "  \"tx_code\": \"0201\",\n" +
-                "  \"results\": [\n" +
-                "    {\n" +
-                "      \"dockingOrgName\": \"\",\n" +
-                "      \"gender\": \"\",\n" +
-                "      \"vapName\": \"\",\n" +
-                "      \"certificateLevel\": \"\",\n" +
-                "      \"isMeeting\": \"\",\n" +
-                "      \"dockingOrgUserphone\": \"\",\n" +
-                "      \"cname\": \"'梁'''\",\n" +
-                "      \"headUrl\": \"http://sdjfkdfjkd.com.cn\",\n" +
-                "      \"roleType\": 0,\n" +
-                "      \"dockingOrgUserName\": \"\",\n" +
-                "      \"institution\": \"\",\n" +
-                "      \"ename\": \"\",\n" +
-                "      \"nationality\": \"CHN\",\n" +
-                "      \"phone\": \"18580866220\",\n" +
-                "      \"vapPhone\": \"\",\n" +
-                "      \"visitDate\": \"2019-08-27\",\n" +
-                "      \"id\": \"0d06af68-9d4e-4ba9-9c91-129212038c2b\",\n" +
-                "      \"position\": \"\",\n" +
-                "      \"travel\": 4,\n" +
-                "      \"certificateNum\": \"510725198604213843\",\n" +
-                "      \"certificateType\": 0\n" +
-                "    }\n" +
-                "  ]\n" +
+                "  \"code\": \"1\",\n" +
+                "  \"message\": \"success\",\n" +
+                "  \"data\": {\n" +
+                "    \"interrupt\": false,\n" +
+                "    \"timestamp\": 1608537202840,\n" +
+                "    \"taskId\": \"20201221154223919-14E7-734636690\",\n" +
+                "    \"objectType\": \"TARGET_ACCOUNT\",\n" +
+                "    \"objectCode\": \"testdemo_TargetAccount\",\n" +
+                "    \"effectOn\": \"CREATED\",\n" +
+                "    \"data\": {\n" +
+                "      \"_user\": \"zhangsan\",\n" +
+                "      \"_organization\": null,\n" +
+                "      \"username\": \"zhangsan\",\n" +
+                "      \"password\": null,\n" +
+                "      \"fullname\": \"张三测试\",\n" +
+                "      \"isDisabled\": false,\n" +
+                "      \"isLocked\": false,\n" +
+                "      \"createAt\": \"2020-12-21 15:42:23.000\",\n" +
+                "      \"updateAt\": \"2020-12-21 15:42:23.000\",\n" +
+                "      \"isSystem\": false,\n" +
+                "      \"isPublic\": false,\n" +
+                "      \"isMaster\": true,\n" +
+                "      \"email\": \"zhangsan@crecg.com\",\n" +
+                "      \"employeeNo\": null,\n" +
+                "      \"mobile\": \"13247703738\",\n" +
+                "      \"sex\": \"1\"\n" +
+                "    },\n" +
+                "    \"id\": \"20201221154223828-3236-DD9FB740B\"\n" +
+                "  }\n" +
                 "}";
         String tablePre = "cqyl_ta.T80_TA_EXPO_AUDI_INFO";
         String [] array = getJsonList(jsonValue,"",true);
-        Map<String, String> config = new HashMap<String, String>();
-        try {
-            config.putAll(ReadPropertiesUtils.readConfig("project.properties"));
-        } catch (IOException e) {
-            System.out.println(e.toString());
-        }
+
 //        System.out.println(config);
 //        new KafkaSaveData("bingfu","web_data_profil").start();
 

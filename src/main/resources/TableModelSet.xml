@@ -11,7 +11,7 @@
         <column id="user_name" ref="username"/>
         <!--<column id="" ref="password"/>-->
         <column id="full_name" ref="fullname"/>
-        <column id="is_disable" ref="isDisabled"/>
+        <column id="is_disabled" ref="isDisabled"/>
         <column id="is_locked" ref="isLocked"/>
         <column id="create_at" ref="createAt"/>
         <column id="update_at" ref="updateAt"/>
@@ -28,13 +28,16 @@
     </table>
 
     <!-- 机构信息 -->
-    <table name="">
-        <column id="" ref=""/>
-        <column id="" ref=""/>
-        <column id="" ref=""/>
-        <column id="" ref=""/>
-        <column id="" ref=""/>
-        <column id="" ref=""/>
+    <table name="GTGCDM.PUB_UNIFIED_IDENTITY_ORG">
+        <column id="id" ref="_id">id = id</column>
+        <column id="parent_Id" ref="parentId"/>
+        <column id="full_name" ref="fullName"/>
+        <column id="org_name" ref="orgName"/>
+        <column id="org_full_name" ref="orgFullName"/>
+        <column id="is_disabled" ref="isDisabled"/>
+        <column id="effect_on" ref="effectOn"/>
+        <column id="create_at" ref="createAt"/>
+        <column id="update_at" ref="updateAt"/>
     </table>
 
 </root>
