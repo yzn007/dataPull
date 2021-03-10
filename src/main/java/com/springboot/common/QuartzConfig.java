@@ -1,6 +1,5 @@
 package com.springboot.common;
 
-import com.springboot.httpInterface.job.MyJob;
 import org.quartz.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +16,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class QuartzConfig {
     @Bean
     public JobDetail myJobDetail() {
-        JobDetail jobDetail = JobBuilder.newJob(MyJob.class).withIdentity("myJob1", "myJobGroup1")
-                //JobDataMap可以给任务execute传递参数
-                .usingJobData("job_param", "job_param1").storeDurably().build();
-        return jobDetail;
+//        JobDetail jobDetail = JobBuilder.newJob(MyJob.class).withIdentity("myJob1", "myJobGroup1")
+//                //JobDataMap可以给任务execute传递参数
+//                .usingJobData("job_param", "job_param1").storeDurably().build();
+//        return jobDetail;
+        return null;
     }
 
     @Bean

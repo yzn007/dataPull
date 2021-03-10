@@ -1,18 +1,8 @@
 package com.springboot.scala
 
-import java.io.FileInputStream
 import java.sql.BatchUpdateException
-import java.util.{Date, Properties}
+import java.util.Date
 import java.util.logging.{Level, Logger}
-
-import com.springboot.common.KafkaProducer
-import org.apache.jasper.tagplugins.jstl.core.ForEach
-
-import scala.collection.JavaConverters._
-import org.apache.spark.streaming.dstream.DStream
-import org.apache.spark.streaming.kafka.KafkaUtils
-import org.apache.spark.streaming.{Seconds, StreamingContext}
-import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -20,7 +10,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by DFJX on 2019/6/19.
   */
-object SaveCosumerData {
+object SaveModelData {
   def main(args: List[Array[String]]): Unit = {
 
     //    val list: java.util.List[Int] = Seq(1,2,3,4).asJava
@@ -66,7 +56,6 @@ object SaveCosumerData {
 //              for (i <- 0 until lis.length)
               //                println(lis(i)+";")
 //              println(string.toString())
-              KafkaProducer.writeFile("batchException",string.toString())
               conn.rollback()
             }
           }

@@ -1,8 +1,7 @@
 package com.springboot.common;
 
 import com.alibaba.fastjson.JSONObject;
-import com.springboot.scala.SaveCosumerData;
-import org.apache.commons.lang3.StringUtils;
+import com.springboot.scala.SaveModelData;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
 
@@ -75,9 +74,6 @@ final static Logger logger =
                         if (!reds.contains(sql) && sql != null)
                             reds.add(sql);
 
-                        String[] strDynamic = JsonObjectToAttach.getMetaSqls(table.split(";")[m], null, array);
-                        if (!listDynamic.contains(strDynamic) && null != strDynamic)
-                            listDynamic.add(strDynamic);
                     }
 //                    k++;//只删除一次
                 }
@@ -91,18 +87,10 @@ final static Logger logger =
             if (tmpSeq.size() > 0) {
                 synchronized (LOCKPRE) {
 //                    logger.info( "start:"+tmpSeq.size() + new Date().toString());
-                    SaveCosumerData.main(tmpSeq.toList());
+                    SaveModelData.main(tmpSeq.toList());
 //                    logger.info( "end  :"+i++ + new Date().toString());
                 }
             }
-//            Thread.sleep(50);
-            tmpSeq = JavaConverters.asScalaIteratorConverter(listDynamic.iterator()).asScala().toSeq();
-            if (tmpSeq.size() > 0) {
-                synchronized (LOCKMAIN) {
-                    SaveCosumerData.main(tmpSeq.toList());
-                }
-            }
-//            Thread.sleep(50);
         } catch (Exception e) {
             System.out.println(e.toString());
 //            System.out.println(reds.get(0).toString());

@@ -1,36 +1,18 @@
 package com.springboot.common;
 
 
-import com.alibaba.druid.sql.visitor.functions.Length;
-import com.alibaba.druid.sql.visitor.functions.Substring;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.springboot.scala.SaveCosumerData;
-import org.apache.commons.collections.map.HashedMap;
+import com.springboot.scala.SaveModelData;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.yarn.server.api.protocolrecords.UpdateNodeResourceRequest;
 
 import org.dom4j.io.SAXReader;
 import org.dom4j.*;
-import org.springframework.util.ResourceUtils;
-import scala.Equals;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
-import scala.tools.nsc.transform.patmat.Logic;
 
-import javax.swing.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-
-import static java.util.regex.Matcher.quoteReplacement;
 
 /**
  * Created by yzn00 on 2019/6/27.
@@ -304,7 +286,7 @@ public class JsonObjectToAttach {
         String [] rets = null;
         List<String> whereStr = new ArrayList<>();
         String spChr = "#";
-        String fileName = "TableTpl.xml";
+        String fileName = "TableModelSet.xml";
         if (!StringUtils.isEmpty(tmpFile))
             fileName = tmpFile;
 
@@ -454,7 +436,7 @@ public class JsonObjectToAttach {
     public static String[] processMutikeys(String []array, String table, String tmpFile ) throws IOException {
 
         String spChr = "#";
-        String fileName = "TableTpl.xml";
+        String fileName = "TableModelSet.xml";
         if (!StringUtils.isEmpty(tmpFile))
             fileName = tmpFile;
 
@@ -675,132 +657,7 @@ public class JsonObjectToAttach {
         return retVals;
     }
 
-    /**
-     * 取得应用库sql语句
-     * @param topic
-     * @param tmpFile
-     * @param jsonArray
-     * @return
-     */
-    public static String[] getMetaSqls(String topic,String tmpFile,String[] jsonArray){
-        List<String> att = new ArrayList<>();
 
-        String[] ret = null;
-        String fileName = "PreRelations.xml";
-        if (!StringUtils.isEmpty(tmpFile))
-            fileName = tmpFile;
-
-        try{
-//            String path = ResourceUtils.getURL("classpath:").getPath()+fileName;
-            if(null==preDocument)
-                preDocument = parseDom4j(fileName);
-            Element root = preDocument.getRootElement();
-            for (Iterator iterator = root.elementIterator(); iterator.hasNext(); ) {
-                Element tblEle = (Element) iterator.next();
-                String isValid = "";
-                try{
-                    isValid = tblEle.attributeValue("valid");
-                }catch (Exception ee){
-
-                }
-                if(!isValid.equalsIgnoreCase("true"))
-                    continue;
-                //取得主题
-                String topicName = tblEle.attribute(1).getValue();
-                String []tops = topicName.split(";");
-                boolean isExists = false;
-                for(String t:tops) {
-                    if(t.equalsIgnoreCase(topic)){
-                        isExists = true;
-                        break;
-                    }
-                }
-                if(isExists){
-                    boolean isExist = false;//没有消费数据
-                    if(jsonArray!=null)
-                        for(int j=0;j<jsonArray.length;j++) {
-                            isExist = true;
-                            JSONObject jsonObject = null;
-                            try{
-                                jsonObject = JSONObject.parseObject(jsonArray[j]);
-                            }catch (Exception ex){
-                                System.out.println(ex.toString());
-                            }
-                            String isSplit = tblEle.attribute(2).getValue();
-                            String sqlStr = quoteReplacement(tblEle.getStringValue().replaceAll("\r","").replaceAll("\n",""));
-
-                            String subString = "";
-                            int i = 0;
-                            while(sqlStr.indexOf(quoteReplacement("{"))>-1) {
-                                subString = sqlStr.substring(sqlStr.indexOf(quoteReplacement("{")) + 1, sqlStr.indexOf(quoteReplacement("}")));
-                                String jsonKey = subString;
-                                for(Map.Entry<String,Object> m:jsonObject.entrySet()){
-                                    if(m.getKey().equalsIgnoreCase(jsonKey)) {
-                                        jsonKey = m.getKey();
-                                        break;
-                                    }
-                                }
-                                int jj = 0;
-                                if(null!=jsonObject.get(jsonKey)){
-                                    while(sqlStr.indexOf(quoteReplacement("{"+subString+"}"))>-1) {
-                                        sqlStr = sqlStr.replace(quoteReplacement("{" + subString + "}"), getJoinString(jsonObject.get(jsonKey).toString()));
-                                        if(jj++>sqlStr.length())//防止替换失败死循环
-                                            break;
-                                    }
-                                }
-                                i++;
-                                if(i>sqlStr.length())//防止替换失败死循环
-                                    break;
-                            }
-
-                            if (isSplit.equalsIgnoreCase("true")) {//需求分割sql
-                                String[] sqls = sqlStr.split(";");
-                                for (String s : sqls) {
-                                    String repl = s.replaceAll("；",";");
-                                    if(!att.contains(repl))
-                                        att.add(repl);
-                                }
-                            } else {
-                                att.add(sqlStr);
-                            }
-                            //闸机事件退出
-                            if(!manyExecute.contains(topic))
-                                break;
-                        }
-                    if(!isExist && topic.equalsIgnoreCase(KafkaSaveData.GATE_EVENT_TBL)){
-                        String isSplit = tblEle.attribute(2).getValue();
-                        String sqlStr = quoteReplacement(tblEle.getStringValue().replaceAll("\r","").replaceAll("\n",""));
-                        if (isSplit.equalsIgnoreCase("true")) {//需求分割sql
-                            String[] sqls = sqlStr.split(";");
-                            for (String s : sqls) {
-                                String repl = s.replaceAll("；",";");
-                                if(!att.contains(repl))
-                                    att.add(repl);
-                            }
-                        } else {
-                            att.add(sqlStr);
-                        }
-                    }
-                }
-            }
-        }catch (Exception e){
-            System.out.println(e.toString());
-        }
-        if(att.size()>0) {
-            ret = new String[att.size()];
-            int i=0;
-            for(String s :att){
-                ret[i++] = s;
-            }
-        }
-        return  ret;
-    }
-
-    static  final List<String>  manyExecute = new ArrayList(){
-        {add("cqyl_pre.PARK_VEHIC_START_OUT_EVT")
-        ;add("cqyl_pre.PARK_VEHIC_DRV_IN_EVT");
-            add("cqyl_pre.PARK_PARK_SPC_RESV_INFO");}
-    };
 
     static final Map staticTableRelation = new HashMap(){
         {
@@ -1008,16 +865,14 @@ public class JsonObjectToAttach {
                 if(!reds.contains(sql))
                     reds.add(sql);
 
-                String[] sqlDyc = JsonObjectToAttach.getMetaSqls(table.split(";")[k], "", array);
-                if (null != sqlDyc && !sqlListDyc.contains(sqlDyc))
-                    sqlListDyc.add(sqlDyc);
+
 
             }
 
             try {
                 Seq<String[]> tmpSeq = JavaConverters.asScalaIteratorConverter(reds.iterator()).asScala().toSeq();
                 if (tmpSeq.size() > 0) {
-                    SaveCosumerData.main(tmpSeq.toList());
+                    SaveModelData.main(tmpSeq.toList());
                 }
 
             } catch (Exception e) {

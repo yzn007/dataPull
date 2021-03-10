@@ -72,7 +72,7 @@ spring:
               threadsInheritContextClassLoaderOfInitializingThread: true
       job-store-type: jdbc
       jdbc:
-        initialize-schema: embedded
+        initialize-schema: always
 
 
 #pagehelper分页插件

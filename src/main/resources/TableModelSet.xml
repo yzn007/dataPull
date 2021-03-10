@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+    <!-- 模板配置 -->
+    <!-- 子表配置参数 id:数据库字段名 ref:json字段名 [list]:子表list表名 linkId:关联主表字段-->
+    <!-- 用户信息 -->
+    <table name="GTGCDM.PUB_UNIFIED_IDENTITY_USER">
+        <column id="id" ref="id">id = id</column>
+        <column id="username" ref="_user"/>
+        <column id="organizationId" ref="_organization"/>
+        <column id="user_name" ref="username"/>
+        <!--<column id="" ref="password"/>-->
+        <column id="full_name" ref="fullname"/>
+        <column id="is_disable" ref="isDisabled"/>
+        <column id="is_locked" ref="isLocked"/>
+        <column id="create_at" ref="createAt"/>
+        <column id="update_at" ref="updateAt"/>
+        <column id="is_system" ref="isSystem"/>
+        <column id="is_public" ref="isPublic"/>
+        <column id="is_master" ref="isMaster"/>
+        <!--<column id="" ref="email"/>-->
+        <column id="employee_id" ref="employeeNo"/>
+        <column id="phone" ref="mobile"/>
+        <!--<column id="" ref="sex"/>-->
+        <!--<column id="" ref=""/>-->
+        <!--<column id="" ref=""/>-->
+        <!--<column id="" ref=""/>-->
+    </table>
+
+    <!-- 机构信息 -->
+    <table name="">
+        <column id="" ref=""/>
+        <column id="" ref=""/>
+        <column id="" ref=""/>
+        <column id="" ref=""/>
+        <column id="" ref=""/>
+        <column id="" ref=""/>
+    </table>
+
+</root>
+
+
+
+
+

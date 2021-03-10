@@ -4,8 +4,7 @@ package com.springboot.httpInterface;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.springboot.httpInterface.entity.Person;
-import com.springboot.httpInterface.services.PersonService;
+import org.apache.avro.ipc.specific.Person;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -47,8 +46,6 @@ import java.util.Map.Entry;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class HttpClientTest {
-    @Autowired
-    PersonService personService;
     /**
      * post请求传输map数据
      *
@@ -268,7 +265,6 @@ public class HttpClientTest {
     public void testPost(){
         String url = "http://localhost:8080/httpService/sendPostDataByJson";
         Map<String, String> map = new HashMap<String, String>();
-        List <Person>list = personService.selectAllPerson();
         String body = post(url);
 //        String body = sendPostDataByJson(url, JSON.toJSONString(map), "utf-8");
         System.out.println("响应结果：" + body);
@@ -345,27 +341,7 @@ public class HttpClientTest {
         }
     }
 
-    @Test
-    public void testSendPostDataByJson() throws ClientProtocolException, IOException {
-        String url = "http://localhost:8082/httpService/sendPostDataByJson";
-        Map<String, String> map = new HashMap<String, String>();
-        List <Person>list = personService.selectAllPerson();
-//        map.put("name", "wyj");
-//        map.put("city", "南京");
-        list.forEach(person->{
-            String body = null;
-            try {
-                body = sendPostDataByJson(url, JSON.toJSONString(person), "utf-8");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-//        String body = sendPostDataByJson(url, JSON.toJSONString(map), "utf-8");
-            System.out.println("响应结果：" + body);
-        });
-        String body = sendPostDataByJson(url, JSONArray.toJSONString(list),"utf-8");
-//        String body = sendPostDataByJson(url, JSON.toJSONString(map), "utf-8");
-        System.out.println("响应结果：" + body);
-    }
+
 
     @Test
     public void testSendGetData() throws ClientProtocolException, IOException {

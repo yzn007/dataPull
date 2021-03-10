@@ -2,7 +2,6 @@ package com.springboot.httpInterface.job;
 
 import cn.crec.pojo.OutParam;
 import cn.crec.pull.PullUtil;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.springboot.common.JsonObjectToAttach;
 import com.springboot.common.ReadPropertiesUtils;
@@ -13,13 +12,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.springboot.common.SaveDataStatic;
-import com.springboot.common.UpdTblProducter;
 import com.springboot.httpInterface.controller.HttpServiceTest;
-import com.springboot.httpInterface.entity.Route;
-import com.springboot.httpInterface.entity.RouteVehicle;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -31,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UserPullJob implements BaseJob {
 
-    private static Logger _log = LoggerFactory.getLogger(StaticJob.class);
+    private static Logger _log = LoggerFactory.getLogger(UserPullJob.class);
 
     final static int NUM_PROCESS = 6;
     static Map<String, String> config = new HashMap<String, String>();
