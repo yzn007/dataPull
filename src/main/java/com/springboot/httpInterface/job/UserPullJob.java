@@ -74,7 +74,7 @@ public class UserPullJob implements BaseJob {
 
         //systemCode:对应《6.2术语解释》的SYSTEMCODE，一体化平台申请
         //integrationKey:集成客户端会自动使用MD5加密，由统一身份安全平台提供
-        outParam = pullUtil.login("lawSys", "P@ssw0rd");
+        outParam = pullUtil.login("1000113", "ZP1FqYx_QxVWDqI8KTdmProtY4cF4KgaVAChBwGSW-U");
         if (outParam.getStatus() == 1) {
             System.out.println("登录成功");
         } else {
@@ -179,13 +179,18 @@ public class UserPullJob implements BaseJob {
                 try{
                     data = JSONObject.parseObject(jsonStr);
                     JSONObject jsonObject =JSONObject.parseObject(data.get("data").toString());
-
+                    //插入id
                     id = jsonObject.get("id").toString();
                     JSONObject target = JSONObject.parseObject(jsonObject.get("data").toString());
                     target.put("id",id);
+                    //替换bool值
+                    JsonObjectToAttach.replaceBooleanString(target);
                     jsonObject.put("data",target);
+
                     data.put("data",jsonObject);
+
                     jsonStr = data.toJSONString();
+
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }

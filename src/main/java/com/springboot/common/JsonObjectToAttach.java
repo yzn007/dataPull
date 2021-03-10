@@ -529,6 +529,21 @@ public class JsonObjectToAttach {
     }
 
     /**
+     * 替换boolean值
+     * @param jsonObject
+     */
+    public static void replaceBooleanString(JSONObject jsonObject){
+
+        for(Map.Entry keyset:jsonObject.entrySet()) {
+            if (null != keyset.getValue())
+                if( keyset.getValue().toString().equalsIgnoreCase("false"))
+                    jsonObject.put(keyset.getKey().toString(),"0");
+                else if(keyset.getValue().toString().equalsIgnoreCase("true"))
+                    jsonObject.put(keyset.getKey().toString(),"1");
+        }
+    }
+
+    /**
      * 替换块内字符，防止替换局部字符串
      * @param orignal
      * @param match
