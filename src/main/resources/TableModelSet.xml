@@ -7,11 +7,11 @@
     <table name="GTGCDM.PUB_UNIFIED_IDENTITY_USER">
         <column id="id" ref="systemUserId">id = systemUserId</column>
         <column id="username" ref="_user"/>
-        <column id="organizationId" ref="_organization"/>
+        <column id="organization" ref="_organization"/>
         <column id="user_name" ref="username"/>
         <!--<column id="" ref="password"/>-->
         <column id="full_name" ref="fullname"/>
-        <column id="is_disable" ref="isDisable"/>
+        <column id="is_disabled" ref="isDisabled"/>
         <column id="is_locked" ref="isLocked"/>
         <column id="create_at" ref="createAt"/>
         <column id="update_at" ref="updateAt"/>
@@ -21,6 +21,7 @@
         <!--<column id="" ref="email"/>-->
         <column id="employee_id" ref="employeeNo"/>
         <column id="phone" ref="mobile"/>
+        <column id="effect_on" ref="effectOn"/>
         <!--<column id="" ref="sex"/>-->
         <!--<column id="" ref=""/>-->
         <!--<column id="" ref=""/>-->

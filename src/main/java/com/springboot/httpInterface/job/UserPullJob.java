@@ -78,7 +78,11 @@ public class UserPullJob implements BaseJob {
         } else {
             System.out.println("登录失败");
             //模拟测试
-            processPullInfo(null);
+            try {
+                processPullInfo(null);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             return;
         }
         String tokenId = outParam.getTokenId();
@@ -96,15 +100,20 @@ public class UserPullJob implements BaseJob {
             System.out.println("业务系统处理数据业务逻辑并入库");
             JSONObject data = JSONObject.parseObject(outParam.getData().toString());
 
-            processPullInfo(data.toJSONString());
+            try {
+                processPullInfo(data.toJSONString());
+            }catch (Exception e){
+                System.out.print(e.toString());
+            }
 
             System.out.println("将入库后的id主键返回并赋值给id");
             String id = "";
+            JSONObject jsonObject = null;
             try {
-                JSONObject jsonObject = JSONObject.parseObject(data.get("data").toString());
-                id = jsonObject.get("id").toString();
+                jsonObject = JSONObject.parseObject(data.toJSONString());
+                id = jsonObject.get("systemOrgId").toString();
             } catch (Exception ex) {
-
+                id = jsonObject.get("systemUserId").toString();
             }
             outParam = pullUtil.pullFinish(outParam.getTokenId(), tokenId, id);
             if (outParam.getStatus() == 0) {
@@ -123,7 +132,7 @@ public class UserPullJob implements BaseJob {
 
     }
 
-    private void processPullInfo(String jsonStr) {
+    private void processPullInfo(String jsonStr)throws Exception {
         ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         try {
 //    this.jsonStr = httpServiceTest.getJsonData("http://localhost/httpService/sendGetData?RayData=CurrTotlCnt", "utf-8");
