@@ -5,13 +5,13 @@
     <!-- 子表配置参数 id:数据库字段名 ref:json字段名 [list]:子表list表名 linkId:关联主表字段-->
     <!-- 用户信息 -->
     <table name="GTGCDM.PUB_UNIFIED_IDENTITY_USER">
-        <column id="id" ref="id">id = id</column>
+        <column id="id" ref="systemUserId">id = systemUserId</column>
         <column id="username" ref="_user"/>
         <column id="organizationId" ref="_organization"/>
         <column id="user_name" ref="username"/>
         <!--<column id="" ref="password"/>-->
         <column id="full_name" ref="fullname"/>
-        <column id="is_disabled" ref="isDisabled"/>
+        <column id="is_disable" ref="isDisable"/>
         <column id="is_locked" ref="isLocked"/>
         <column id="create_at" ref="createAt"/>
         <column id="update_at" ref="updateAt"/>
@@ -29,15 +29,16 @@
 
     <!-- 机构信息 -->
     <table name="GTGCDM.PUB_UNIFIED_IDENTITY_ORG">
-        <column id="id" ref="_id">id = id</column>
-        <column id="parent_Id" ref="parentId"/>
-        <column id="full_name" ref="fullName"/>
-        <column id="org_name" ref="orgName"/>
+        <column id="id" ref="systemOrgId">id = systemOrgId</column>
+        <column id="parent_Id" ref="_parent"/>
+        <column id="org_name" ref="_organization"/>
+        <column id="full_name" ref="fullname"/>
         <column id="org_full_name" ref="orgFullName"/>
         <column id="is_disabled" ref="isDisabled"/>
         <column id="effect_on" ref="effectOn"/>
         <column id="create_at" ref="createAt"/>
         <column id="update_at" ref="updateAt"/>
+        <column id="address" ref="linkAddress"/>
     </table>
 
 </root>

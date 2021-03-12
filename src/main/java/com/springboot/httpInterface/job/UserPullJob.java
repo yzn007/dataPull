@@ -82,6 +82,7 @@ public class UserPullJob implements BaseJob {
             return;
         }
         String tokenId = outParam.getTokenId();
+        int i = 0;
         while (true) {
             outParam = pullUtil.pullTask(tokenId);
             if (outParam.getStatus() == 2) {
@@ -110,8 +111,11 @@ public class UserPullJob implements BaseJob {
                 System.out.println("下拉完成失败");
                 break;
             } else {
-                System.out.println("下拉完成成功一条");
+                System.out.println("\n");
+                System.out.printf("下拉完成成功一条{%d}",i);
             }
+            if(i++>=200)//测试200条
+                break;
         }
         //注销token
         pullUtil.logout(tokenId);
@@ -169,51 +173,56 @@ public class UserPullJob implements BaseJob {
 //                        "  }\n" +
 //                        "}";
                 String pullJsonString = "{\n" +
-                        "  \"code\": \"1\",\n" +
-                        "  \"message\": \"success\",\n" +
+                        "  \"success\": true,\n" +
+                        "  \"interrupt\": false,\n" +
+                        "  \"timestamp\": 1615431765508,\n" +
+                        "  \"taskId\": \"20210310162940670-2E26-DC7EEF45E\",\n" +
+                        "  \"objectType\": \"TARGET_ORGANIZATION\",\n" +
+                        "  \"objectCode\": \"xxgtjc_Org\",\n" +
+                        "  \"effectOn\": \"CREATED\",\n" +
                         "  \"data\": {\n" +
-                        "    \"interrupt\": false,\n" +
-                        "    \"timestamp\": 1608537202840,\n" +
-                        "    \"taskId\": \"20201221154223919-14E7-734636690\",\n" +
-                        "    \"objectType\": \"TARGET_ORGANIZATION\",\n" +
-                        "    \"objectCode\": \"testdemo_TargetOragnization\",\n" +
+                        "    \"sequence\": 0,\n" +
+                        "    \"code\": \"20181101205649951-5BE8-C10E41DF0\",\n" +
+                        "    \"_organization\": \"3C3117B5-7781-40B3-895F-03423E4C2EB3\",\n" +
+                        "    \"name\": \"中国铁路工程集团有限公司\",\n" +
+                        "    \"updateAt\": \"2021-03-10 16:29:19.000\",\n" +
+                        "    \"fullname\": \"中国铁路工程集团有限公司\",\n" +
+                        "    \"isDisabled\": false,\n" +
+                        "    \"type\": \"0\",\n" +
+                        "    \"systemOrgId\": \"20181101205649951-5BE8-C10E41DF0\",\n" +
+                        "    \"createAt\": \"2021-03-10 16:28:47.000\",\n" +
                         "    \"effectOn\": \"CREATED\",\n" +
-                        "    \"data\": {\n" +
-                        "      \"parentId\": null,\n" +
-                        "      \"fullName\": \"机构一\",\n" +
-                        "      \"orgName\": \"test\",\n" +
-                        "      \"isDisabled\": false,\n" +
-                        "      \"createAt\": \"2020-12-21 15:42:23.000\",\n" +
-                        "      \"updateAt\": \"2020-12-21 15:42:23.000\",\n" +
-                        "      \"effectOn\": true,\n" +
-                        "      \"orgFullName\": \"测试机构全名\"\n" +
-                        "    },\n" +
-                        "    \"id\": \"20201221154223828-3236-DD9FB740C\"\n" +
-                        "  }\n" +
+                        "    \"objectType\": \"TARGET_ORGANIZATION\"\n" +
+                        "  },\n" +
+                        "  \"id\": \"20210310162940633-88D5-C4FEAF2A9\"\n" +
                         "}";
-
-                if (StringUtils.isEmpty(jsonStr))
+                if (StringUtils.isEmpty(jsonStr)) {
                     jsonStr = pullJsonString;
+                    String id = "";
+                    JSONObject data = null;
+                    try{
+                        data = JSONObject.parseObject(jsonStr);
+                        JSONObject jsonObject =JSONObject.parseObject(data.get("data").toString());
+                        //插入id
+                        id = jsonObject.get("id").toString();
+                        JSONObject target = JSONObject.parseObject(jsonObject.get("data").toString());
+                        target.put("id",id);
+                        //替换bool值
+                        JsonObjectToAttach.replaceBooleanString(target);
+                        jsonObject.put("data",target);
 
-                String id = "";
-                JSONObject data = null;
-                try{
-                    data = JSONObject.parseObject(jsonStr);
-                    JSONObject jsonObject =JSONObject.parseObject(data.get("data").toString());
-                    //插入id
-                    id = jsonObject.get("id").toString();
-                    JSONObject target = JSONObject.parseObject(jsonObject.get("data").toString());
-                    target.put("id",id);
+                        data.put("data",jsonObject);
+
+                        jsonStr = data.toJSONString();
+
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+                }else {
+                    JSONObject target = JSONObject.parseObject(jsonStr);
                     //替换bool值
                     JsonObjectToAttach.replaceBooleanString(target);
-                    jsonObject.put("data",target);
-
-                    data.put("data",jsonObject);
-
-                    jsonStr = data.toJSONString();
-
-                }catch (Exception ex){
-                    ex.printStackTrace();
+                    jsonStr = target.toJSONString();
                 }
 
 
