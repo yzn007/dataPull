@@ -27,36 +27,18 @@ public class UserPullJob implements BaseJob {
 
     private static Logger _log = LoggerFactory.getLogger(UserPullJob.class);
 
-    final static int NUM_PROCESS = 6;
-//    static Map<String, String> config = new HashMap<String, String>();
-
     //取得静态表
     static Map<String, String> topicS = new HashMap<>();
 
-    private String jsonStr = "";
-    private String table = "GTGCDM.PUB_UNIFIED_IDENTITY_USER";
-    //令牌地址
-    static String accessUrl = "http://183.66.65.155:9002/api/Token?appid=001&secret=ABCDEFG";
-
     final String topicName = UserPullJob.class.getSimpleName();
-//    final String configName = "project.properties";
 
     HttpServiceTest httpServiceTest = null;
 
     public UserPullJob() {
-//        try {
-//            if (config.size() == 0)
-//                config.putAll(ReadPropertiesUtils.readConfig(configName));
-            if (topicS.size() == 0)
-                //取得静态表
-                topicS = JsonObjectToAttach.getValidProperties(topicName, null, null, true);
+        if (topicS.size() == 0)
+            //取得静态表
+            topicS = JsonObjectToAttach.getValidProperties(topicName, null, null, true);
 
-//            HttpServiceTest httpServiceTest = new HttpServiceTest();
-//            this.jsonStr = httpServiceTest.getJsonData("http://localhost/httpService/sendGetData?RayData=CurrTotlCnt", "utf-8");
-
-//        } catch (IOException e) {
-//            System.out.println(e.toString());
-//        }
     }
 
 
@@ -71,8 +53,7 @@ public class UserPullJob implements BaseJob {
 
         //systemCode:对应《6.2术语解释》的SYSTEMCODE，一体化平台申请
         //integrationKey:集成客户端会自动使用MD5加密，由统一身份安全平台提供
-
-        outParam = pullUtil.login(systemCode,integrationKey);
+        outParam = pullUtil.login(systemCode, integrationKey);
         if (outParam.getStatus() == 1) {
             System.out.println("登录成功");
         } else {
@@ -80,7 +61,7 @@ public class UserPullJob implements BaseJob {
             //模拟测试
             try {
                 processPullInfo(null);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return;
@@ -97,16 +78,16 @@ public class UserPullJob implements BaseJob {
                 System.out.println("拉取数据失败");
                 break;
             }
-            System.out.println("业务系统处理数据业务逻辑并入库");
+//            System.out.println("业务系统处理数据业务逻辑并入库");
             JSONObject data = JSONObject.parseObject(outParam.getData().toString());
 
             try {
                 processPullInfo(data.toJSONString());
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.print(e.toString());
             }
 
-            System.out.println("将入库后的id主键返回并赋值给id");
+//            System.out.println("将入库后的id主键返回并赋值给id");
             String id = "";
             JSONObject jsonObject = null;
             try {
@@ -121,29 +102,28 @@ public class UserPullJob implements BaseJob {
                 break;
             } else {
                 System.out.println("\n");
-                System.out.printf("下拉完成成功一条{%d}",i);
+//                System.out.printf("下拉完成成功一条{%d}",i);
             }
-            if(i++>=200)//测试200条
+            if (i++ >= 200)//测试200条
                 break;
         }
+        System.out.printf("\n下拉完成成功{%d}条数据！", --i);
         //注销token
+        System.out.println("\n注销token开始……");
         pullUtil.logout(tokenId);
-
+        System.out.println("注销token结束……");
 
     }
 
-    private void processPullInfo(String jsonStr)throws Exception {
+    private void processPullInfo(String jsonStr) throws Exception {
         ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         try {
-//    this.jsonStr = httpServiceTest.getJsonData("http://localhost/httpService/sendGetData?RayData=CurrTotlCnt", "utf-8");
-            Date insertDate = null;
             for (Map.Entry<String, String> m : topicS.entrySet()) {
 
                 String[] tabAndMark = null;
                 if (m.getValue().indexOf(",") >= 0) {
                     tabAndMark = m.getValue().split(",");
                 }
-//                String tableNm = tabAndMark == null ? m.getValue() : tabAndMark[0];
                 if (tabAndMark.length < 4) {
                     continue;
                 }
@@ -209,36 +189,32 @@ public class UserPullJob implements BaseJob {
                     jsonStr = pullJsonString;
                     String id = "";
                     JSONObject data = null;
-                    try{
+                    try {
                         data = JSONObject.parseObject(jsonStr);
-                        JSONObject jsonObject =JSONObject.parseObject(data.get("data").toString());
+                        JSONObject jsonObject = JSONObject.parseObject(data.get("data").toString());
                         //插入id
                         id = jsonObject.get("id").toString();
                         JSONObject target = JSONObject.parseObject(jsonObject.get("data").toString());
-                        target.put("id",id);
+                        target.put("id", id);
                         //替换bool值
                         JsonObjectToAttach.replaceBooleanString(target);
-                        jsonObject.put("data",target);
+                        jsonObject.put("data", target);
 
-                        data.put("data",jsonObject);
+                        data.put("data", jsonObject);
 
                         jsonStr = data.toJSONString();
 
-                    }catch (Exception ex){
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     }
-                }else {
+                } else {
                     JSONObject target = JSONObject.parseObject(jsonStr);
                     //替换bool值
                     JsonObjectToAttach.replaceBooleanString(target);
                     jsonStr = target.toJSONString();
                 }
 
-
-                //String getJson = httpServiceTest.getJsonData(url, "utf-8", "RouteId", "", true);
-
                 List<String> listJson = new ArrayList<>();
-                //listJson.add(getJson);
                 listJson.add(jsonStr);
                 SaveDataStatic saveDataStatic = new SaveDataStatic(m.getKey(), tabAndMark == null ? m.getValue() : tabAndMark[0],
                         tabAndMark == null ? "false" : tabAndMark[1], tabAndMark == null ? "false" : tabAndMark[2],
