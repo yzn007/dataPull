@@ -25,7 +25,12 @@
 	</properties>
 
 	<dependencies>
-
+		<!-- https://mvnrepository.com/artifact/postgresql/postgresql -->
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>8.2-504.jdbc4</version>
+		</dependency>
 		<!-- CXF webservice -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>

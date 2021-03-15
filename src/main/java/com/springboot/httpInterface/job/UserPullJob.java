@@ -58,12 +58,12 @@ public class UserPullJob implements BaseJob {
             System.out.println("登录成功");
         } else {
             System.out.println("登录失败");
-            //模拟测试
-            try {
-                processPullInfo(null);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            //模拟测试
+//            try {
+//                processPullInfo(null);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
             return;
         }
         String tokenId = outParam.getTokenId();
@@ -96,7 +96,7 @@ public class UserPullJob implements BaseJob {
             } catch (Exception ex) {
                 id = jsonObject.get("systemUserId").toString();
             }
-            outParam = pullUtil.pullFinish(outParam.getTokenId(), tokenId, id);
+            outParam = pullUtil.pullFinish(tokenId,outParam.getTaskId(), id);
             if (outParam.getStatus() == 0) {
                 System.out.println("下拉完成失败");
                 break;
@@ -107,7 +107,7 @@ public class UserPullJob implements BaseJob {
             if (i++ >= 200)//测试200条
                 break;
         }
-        System.out.printf("\n下拉完成成功{%d}条数据！", --i);
+        System.out.printf("\n下拉完成成功{%d}条数据！", i>0?--i:i);
         //注销token
         System.out.println("\n注销token开始……");
         pullUtil.logout(tokenId);

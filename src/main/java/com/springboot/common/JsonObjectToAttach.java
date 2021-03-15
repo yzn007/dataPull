@@ -521,9 +521,9 @@ public class JsonObjectToAttach {
 
         for(Map.Entry keyset:jsonObject.entrySet()) {
             if (null != keyset.getValue())
-                if( keyset.getValue().toString().equalsIgnoreCase("false"))
+                if( keyset.getValue().toString().trim().equalsIgnoreCase("false"))
                     jsonObject.put(keyset.getKey().toString(),"0");
-                else if(keyset.getValue().toString().equalsIgnoreCase("true"))
+                else if(keyset.getValue().toString().trim().equalsIgnoreCase("true"))
                     jsonObject.put(keyset.getKey().toString(),"1");
         }
     }
