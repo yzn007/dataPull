@@ -1,5 +1,5 @@
 http:
-  port: 8083
+  port: 8084
 server:
   ssl:
     key-alias: _.chongqingexpo.com
@@ -7,7 +7,7 @@ server:
     key-store-password: 93zgk1o96j
     key-store-type: JKS
     enabled: true
-  port: 10101
+  port: 10104
   tomcat:
     accept-count: 500
     max-threads: 200
@@ -26,7 +26,7 @@ server:
 spring:
     datasource:
         name: test
-        url: jdbc:mysql://localhost:3307/quartz?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+        url: jdbc:mysql://localhost:3307/zhongtie?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
         username: root
         password: 123456
         # 使用druid数据源
@@ -51,29 +51,50 @@ spring:
         suffix: .jsp
       static-path-pattern: /**
 
-    quartz:
-      properties:
-        org:
-          quartz:
-            scheduler:
-              instanceName: MyScheduler
-              instanceId: AUTO
-            jobStore:
-              class: org.quartz.impl.jdbcjobstore.JobStoreTX
-              driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-              tablePrefix: QRTZ_
-#              isClustered: true
-#              clusterCheckinInterval: 10000
-              useProperties: false
-            threadPool:
-              class: org.quartz.simpl.SimpleThreadPool
-              threadCount: 1000
-              threadPriority: 5
-              threadsInheritContextClassLoaderOfInitializingThread: true
-      job-store-type: jdbc
-      jdbc:
-        initialize-schema: embedded
+#    quartz:
+#      properties:
+#        org:
+#          quartz:
+#            scheduler:
+#              instanceName: quartzScheduler
+##              instanceId: AUTO
+#              rmi:
+#                export: false
+#                proxy: proxy
+#              wrapJobExecutionInUserTransaction: false
+#            jobStore:
+#              class: org
+#              driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+##              tablePrefix: QRTZ_
+##              isClustered: true
+##              clusterCheckinInterval: 10000
+##              useProperties: true
+#            threadPool:
+#              class: org.quartz.simpl.SimpleThreadPool
+#              threadCount: 1000
+#              threadPriority: 5
+#              threadsInheritContextClassLoaderOfInitializingThread: true
+#      job-store-type: jdbc
+#      jdbc:
+#        initialize-schema: embedded
 
+org:
+  quartz:
+    threadPool:
+      class: org.quartz.simpl.SimpleThreadPool
+      threadCount: 5
+      threadPriority: 5
+      threadsInheritContextClassLoaderOfInitializingThread: true
+    scheduler:
+      instanceName: quartzScheduler
+      rmi:
+        export: false
+        proxy: false
+      wrapJobExecutionInUserTransaction: false
+    jobStore:
+      misfireThreshold: 50000
+      class: org.quartz.simpl.RAMJobStore
+      driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
 
 #pagehelper分页插件
 pagehelper:
@@ -93,5 +114,10 @@ logging:
   level:
     root: error
     com.springboot.common: info
+
+job1: job1
+group1: group1
+cron: 0 0/9 * * * ?
+
 
 
