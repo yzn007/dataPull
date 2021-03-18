@@ -38,7 +38,7 @@
 			<version>3.2.0</version>
 		</dependency>
 		<!-- CXF webservice -->
-		<!--Quartz-->
+		<!--Quartz no database-->
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
@@ -54,7 +54,7 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 		</dependency>
-
+<!-- quartz tables mode-->
 		<!--<dependency>-->
             <!--<groupId>org.springframework.boot</groupId>-->
             <!--<artifactId>spring-boot-starter-quartz</artifactId>-->

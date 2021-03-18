@@ -50,25 +50,21 @@ spring:
         prefix: /
         suffix: .jsp
       static-path-pattern: /**
-
+#有表模式
 #    quartz:
 #      properties:
 #        org:
 #          quartz:
 #            scheduler:
 #              instanceName: quartzScheduler
-##              instanceId: AUTO
-#              rmi:
-#                export: false
-#                proxy: proxy
-#              wrapJobExecutionInUserTransaction: false
+#              instanceId: AUTO
 #            jobStore:
-#              class: org
+#              class: org.quartz.impl.jdbcjobstore.JobStoreTX
 #              driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-##              tablePrefix: QRTZ_
+#              tablePrefix: QRTZ_
 ##              isClustered: true
 ##              clusterCheckinInterval: 10000
-##              useProperties: true
+#              useProperties: false
 #            threadPool:
 #              class: org.quartz.simpl.SimpleThreadPool
 #              threadCount: 1000
@@ -77,7 +73,7 @@ spring:
 #      job-store-type: jdbc
 #      jdbc:
 #        initialize-schema: embedded
-
+#无表模式
 org:
   quartz:
     threadPool:

@@ -14,9 +14,9 @@
 				qrtz_triggers.TRIGGER_STATE,
 				date_format(FROM_UNIXTIME(qrtz_triggers.NEXT_FIRE_TIME/1000),'%Y-%m-%d %T') TRIGGER_NEXT_FIRE_TIME
 			FROM
-				quartz.qrtz_job_details qrtz_job_details
-			JOIN quartz.qrtz_triggers qrtz_triggers
-			JOIN quartz.qrtz_cron_triggers ON qrtz_job_details.JOB_NAME = qrtz_triggers.JOB_NAME
+				qrtz_job_details qrtz_job_details
+			JOIN qrtz_triggers qrtz_triggers
+			JOIN qrtz_cron_triggers ON qrtz_job_details.JOB_NAME = qrtz_triggers.JOB_NAME
 			AND qrtz_triggers.TRIGGER_NAME = qrtz_cron_triggers.TRIGGER_NAME
 			AND qrtz_triggers.TRIGGER_GROUP = qrtz_cron_triggers.TRIGGER_GROUP
     </select>

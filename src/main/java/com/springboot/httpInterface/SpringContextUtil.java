@@ -40,6 +40,7 @@ public class SpringContextUtil extends SpringBeanJobFactory implements Applicati
     public static void setContext(ApplicationContext applicationContext) throws BeansException, SchedulerException {
 //        System.out.print("初始化设置上下文:"+applicationContext);
         SpringContextUtil.applicationContext = applicationContext;
+        //内存模式打开
         startJob();
     }
     public static ApplicationContext getApplicationContext(){
