@@ -58,7 +58,7 @@ public class UserPullJob implements BaseJob {
             System.out.println("登录成功");
         } else {
             System.out.println("登录失败");
-//            //模拟测试
+            //模拟测试
 //            try {
 //                processPullInfo(null);
 //            } catch (Exception e) {
@@ -115,6 +115,11 @@ public class UserPullJob implements BaseJob {
 
     }
 
+    /**
+     * 处理下拉接入json
+     * @param jsonStr
+     * @throws Exception
+     */
     private void processPullInfo(String jsonStr) throws Exception {
         ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         try {
@@ -161,6 +166,7 @@ public class UserPullJob implements BaseJob {
 //                        "    \"id\": \"20201221154223828-3236-DD9FB740B\"\n" +
 //                        "  }\n" +
 //                        "}";
+
                 String pullJsonString = "{\n" +
                         "  \"success\": true,\n" +
                         "  \"interrupt\": false,\n" +
@@ -169,19 +175,20 @@ public class UserPullJob implements BaseJob {
                         "  \"objectType\": \"TARGET_ORGANIZATION\",\n" +
                         "  \"objectCode\": \"xxgtjc_Org\",\n" +
                         "  \"effectOn\": \"CREATED\",\n" +
-                        "  \"data\": {\n" +
-                        "    \"sequence\": 0,\n" +
-                        "    \"code\": \"20181101205649951-5BE8-C10E41DF0\",\n" +
-                        "    \"_organization\": \"3C3117B5-7781-40B3-895F-03423E4C2EB3\",\n" +
-                        "    \"name\": \"中国铁路工程集团有限公司\",\n" +
-                        "    \"updateAt\": \"2021-03-10 16:29:19.000\",\n" +
-                        "    \"fullname\": \"中国铁路工程集团有限公司\",\n" +
-                        "    \"isDisabled\": false,\n" +
-                        "    \"type\": \"0\",\n" +
-                        "    \"systemOrgId\": \"20181101205649951-5BE8-C10E41DF0\",\n" +
-                        "    \"createAt\": \"2021-03-10 16:28:47.000\",\n" +
-                        "    \"effectOn\": \"CREATED\",\n" +
-                        "    \"objectType\": \"TARGET_ORGANIZATION\"\n" +
+                        "\"data\":{\n" +
+                        "  \"code\": \"20200715100151100-1459-5F4D21351\",\n" +
+                        "  \"updateAt\": \"2021-03-10 16:30:11.000\",\n" +
+                        "  \"type\": \"2\",\n" +
+                        "  \"systemOrgId\": \"20200715100151100-1459-888888888\",\n" +
+                        "  \"createAt\": \"2021-03-10 16:29:40.000\",\n" +
+                        "  \"effectOn\": \"CREATED\",\n" +
+                        "  \"objectType\": \"TARGET_ORGANIZATION\",\n" +
+                        "  \"sequence\": 0,\n" +
+                        "  \"_parent\": \"中国铁路工程集团有限公司/中国中铁股份有限公司\",\n" +
+                        "  \"_organization\": \"中国铁路工程集团有限公司/中国中铁股份有限公司/所属分支机构\",\n" +
+                        "  \"name\": \"所属分支机构\",\n" +
+                        "  \"fullname\": \"所属分支机构\",\n" +
+                        "  \"isDisabled\": false\n" +
                         "  },\n" +
                         "  \"id\": \"20210310162940633-88D5-C4FEAF2A9\"\n" +
                         "}";
@@ -192,13 +199,11 @@ public class UserPullJob implements BaseJob {
                     try {
                         data = JSONObject.parseObject(jsonStr);
                         JSONObject jsonObject = JSONObject.parseObject(data.get("data").toString());
-                        //插入id
-                        id = jsonObject.get("id").toString();
-                        JSONObject target = JSONObject.parseObject(jsonObject.get("data").toString());
-                        target.put("id", id);
+//                        //插入id
+//                        id = data.get("id").toString();
+//                        jsonObject.put("id", id);
                         //替换bool值
-                        JsonObjectToAttach.replaceBooleanString(target);
-                        jsonObject.put("data", target);
+                        JsonObjectToAttach.replaceBooleanString(jsonObject);
 
                         data.put("data", jsonObject);
 

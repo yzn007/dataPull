@@ -1,23 +1,19 @@
 package com.springboot.common;
 
 
-import com.alibaba.druid.sql.ast.statement.SQLIfStatement;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.springboot.scala.SaveModelData;
 import org.apache.commons.lang3.StringUtils;
-
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.dom4j.*;
-import org.json4s.jackson.Json;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
-import sun.security.krb5.Config;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
-
-import static org.apache.logging.log4j.ThreadContext.putAll;
 
 /**
  * Created by yzn00 on 2019/6/27.

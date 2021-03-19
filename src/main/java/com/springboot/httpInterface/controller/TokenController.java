@@ -1,11 +1,12 @@
 package com.springboot.httpInterface.controller;
 
 import com.springboot.httpInterface.services.TokenService;
-import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import java.util.Collections.*;
 
 import java.util.Map;
 
