@@ -97,65 +97,65 @@
 			<version>${scala.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-core_2.11</artifactId>
-			<version>${spark.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>jul-to-slf4j</artifactId>
-				</exclusion>
-				<exclusion>
-				<groupId>org.slf4j</groupId>
-				<artifactId>jcl-over-slf4j</artifactId>
-			</exclusion>
-				<!--<exclusion>-->
-					<!--<groupId>log4j</groupId>-->
-					<!--<artifactId>log4j</artifactId>-->
-				<!--</exclusion>-->
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-streaming_2.11</artifactId>
-			<version>${spark.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-streaming-kafka-0-8_2.11</artifactId>
-			<version>2.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-sql_2.11</artifactId>
-			<version>${spark.version}</version>
-			<!--<scope>${spark.pom.scope}</scope>-->
-		</dependency>
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka_2.12</artifactId>
-			<version>1.1.0</version>
+		<!--<dependency>-->
+			<!--<groupId>org.apache.spark</groupId>-->
+			<!--<artifactId>spark-core_2.11</artifactId>-->
+			<!--<version>${spark.version}</version>-->
 			<!--<exclusions>-->
+				<!--<exclusion>-->
+					<!--<groupId>org.slf4j</groupId>-->
+					<!--<artifactId>slf4j-log4j12</artifactId>-->
+				<!--</exclusion>-->
 				<!--<exclusion>-->
 					<!--<groupId>org.slf4j</groupId>-->
 					<!--<artifactId>slf4j-api</artifactId>-->
 				<!--</exclusion>-->
+				<!--<exclusion>-->
+					<!--<groupId>org.slf4j</groupId>-->
+					<!--<artifactId>jul-to-slf4j</artifactId>-->
+				<!--</exclusion>-->
+				<!--<exclusion>-->
+				<!--<groupId>org.slf4j</groupId>-->
+				<!--<artifactId>jcl-over-slf4j</artifactId>-->
+			<!--</exclusion>-->
+				<!--&lt;!&ndash;<exclusion>&ndash;&gt;-->
+					<!--&lt;!&ndash;<groupId>log4j</groupId>&ndash;&gt;-->
+					<!--&lt;!&ndash;<artifactId>log4j</artifactId>&ndash;&gt;-->
+				<!--&lt;!&ndash;</exclusion>&ndash;&gt;-->
 			<!--</exclusions>-->
-		</dependency>
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>2.9.0</version>
-		</dependency>
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.spark</groupId>-->
+			<!--<artifactId>spark-streaming_2.11</artifactId>-->
+			<!--<version>${spark.version}</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.spark</groupId>-->
+			<!--<artifactId>spark-streaming-kafka-0-8_2.11</artifactId>-->
+			<!--<version>2.2.0</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.spark</groupId>-->
+			<!--<artifactId>spark-sql_2.11</artifactId>-->
+			<!--<version>${spark.version}</version>-->
+			<!--&lt;!&ndash;<scope>${spark.pom.scope}</scope>&ndash;&gt;-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.kafka</groupId>-->
+			<!--<artifactId>kafka_2.12</artifactId>-->
+			<!--<version>1.1.0</version>-->
+			<!--&lt;!&ndash;<exclusions>&ndash;&gt;-->
+				<!--&lt;!&ndash;<exclusion>&ndash;&gt;-->
+					<!--&lt;!&ndash;<groupId>org.slf4j</groupId>&ndash;&gt;-->
+					<!--&lt;!&ndash;<artifactId>slf4j-api</artifactId>&ndash;&gt;-->
+				<!--&lt;!&ndash;</exclusion>&ndash;&gt;-->
+			<!--&lt;!&ndash;</exclusions>&ndash;&gt;-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>redis.clients</groupId>-->
+			<!--<artifactId>jedis</artifactId>-->
+			<!--<version>2.9.0</version>-->
+		<!--</dependency>-->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -318,6 +318,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.guicedee.services</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>62</version>
+		</dependency>
+
 		<!--<dependency>-->
 			<!--<groupId>com.jeesite</groupId>-->
 			<!--<artifactId>beetl</artifactId>-->
