@@ -1,6 +1,7 @@
 package com.springboot.common;
 
 
+import com.alibaba.druid.sql.ast.statement.SQLIfStatement;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.springboot.scala.SaveModelData;
@@ -8,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.dom4j.io.SAXReader;
 import org.dom4j.*;
+import org.json4s.jackson.Json;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
 import sun.security.krb5.Config;
@@ -813,10 +815,164 @@ public class JsonObjectToAttach {
 
     }
 
+    /**
+     * 返回嵌套children的rows
+     * @param jsonObj json对象
+     * @param childrenNodeName 嵌套节点名{children:[{}]}
+     * @param id key名:org_id
+     * @param parentVal 父code值
+     */
+    private static JSONArray getWhileLoopChildrens(JSONObject jsonObj,String childrenNodeName,String id,Object parentVal){
+        JSONArray jsonArrayRtn = null;
+        if(jsonObj.get(childrenNodeName)!=null)
+            while(true){
+                //是否存在子节点
+                if(!jsonObj.containsKey(childrenNodeName))
+                    break;
 
+                JSONArray jsonArray = JSONArray.parseArray(jsonObj.get(childrenNodeName).toString());
+                if(jsonArray!=null) {
+                    for (Object obj1 : jsonArray) {
+                        if(null!=jsonArrayRtn)
+                            //添加同级子节点
+                            jsonArrayRtn.addAll(getWhileLoopChildrens(JSONObject.parseObject(obj1.toString()), childrenNodeName, id, jsonObj.get(id)));
+                        else
+                            //返回头节点
+                            jsonArrayRtn = getWhileLoopChildrens(JSONObject.parseObject(obj1.toString()), childrenNodeName, id, jsonObj.get(id));
+                    }
+                    //删除已处理节点
+                    jsonObj.remove(childrenNodeName);
+                }
+
+            }
+        //字节的添加父code
+        JSONObject  jsonObjRetrun = new JSONObject();
+
+        for(Map.Entry entry :jsonObj.entrySet()){
+            if(entry.getKey().equals(childrenNodeName))
+                continue;
+            jsonObjRetrun.put(entry.getKey().toString(),entry.getValue());
+            //父code字段前缀
+            jsonObjRetrun.put("parent_"+id,parentVal);
+        }
+        if(jsonArrayRtn==null)//头节点
+            jsonArrayRtn = new JSONArray();
+        if(jsonArrayRtn!=null)
+            jsonArrayRtn.add(jsonObjRetrun);
+        return jsonArrayRtn;
+    }
 
 
     public static void  main(String args[]){
+        String josnStrChildrens = "{\n" +
+                "  \"data\": {\n" +
+                "    \"org_name\": \"全部\",\n" +
+                "    \"org_id\": 0,\n" +
+                "    \"children\": [\n" +
+                "      {\n" +
+                "        \"org_name\": \"厦门\",\n" +
+                "        \"org_id\": 8,\n" +
+                "        \"children\": [\n" +
+                "          {\n" +
+                "            \"org_name\": \"泉州区\",\n" +
+                "            \"org_id\": 81,\n" +
+                "            \"children\": [\n" +
+                "              {\n" +
+                "                \"org_name\": \"泉州城区\",\n" +
+                "                \"org_id\": 811,\n" +
+                "                \"children\": [\n" +
+                "                  {\n" +
+                "                    \"org_name\": \"城关街道\",\n" +
+                "                    \"org_id\": 8111,\n" +
+                "                    \"children\": [\n" +
+                "                      {\n" +
+                "                        \"org_name\": \"公司81111\",\n" +
+                "                        \"org_id\": 81111,\n" +
+                "                        \"children\": [\n" +
+                "                          {\n" +
+                "                            \"org_name\": \"分公司811111\",\n" +
+                "                            \"org_id\": 811111\n" +
+                "                          }\n" +
+                "                        ]\n" +
+                "                      }\n" +
+                "                    ]\n" +
+                "                  },\n" +
+                "                  {\n" +
+                "                    \"org_name\": \"远郊\",\n" +
+                "                    \"org_id\": 8112,\n" +
+                "                    \"children\": [\n" +
+                "                      {\n" +
+                "                        \"org_name\": \"公司81121\",\n" +
+                "                        \"org_id\": 81121,\n" +
+                "                        \"children\": [\n" +
+                "                          {\n" +
+                "                            \"org_name\": \"分公司811211\",\n" +
+                "                            \"org_id\": 811211\n" +
+                "                          }\n" +
+                "                        ]\n" +
+                "                      }\n" +
+                "                    ]\n" +
+                "                  }\n" +
+                "                ]\n" +
+                "              }\n" +
+                "            ]\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"org_name\": \"深圳\",\n" +
+                "        \"org_id\": 1,\n" +
+                "        \"children\": [\n" +
+                "          {\n" +
+                "            \"org_name\": \"南山区\",\n" +
+                "            \"org_id\": 2,\n" +
+                "            \"children\": [\n" +
+                "              {\n" +
+                "                \"org_name\": \"公司21\",\n" +
+                "                \"org_id\": 21\n" +
+                "              },\n" +
+                "              {\n" +
+                "                \"org_name\": \"公司22\",\n" +
+                "                \"org_id\": 22\n" +
+                "              },\n" +
+                "              {\n" +
+                "                \"org_name\": \"公司23\",\n" +
+                "                \"org_id\": 23\n" +
+                "              }\n" +
+                "            ]\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"org_name\": \"北山区\",\n" +
+                "            \"org_id\": 3,\n" +
+                "            \"children\": [\n" +
+                "              {\n" +
+                "                \"org_name\": \"公司31\",\n" +
+                "                \"org_id\": 31\n" +
+                "              },\n" +
+                "              {\n" +
+                "                \"org_name\": \"公司32\",\n" +
+                "                \"org_id\": 32,\n" +
+                "                \"children\": [\n" +
+                "                  {\n" +
+                "                    \"org_name\": \"公司321\",\n" +
+                "                    \"org_id\": 321\n" +
+                "                  }\n" +
+                "                ]\n" +
+                "              }\n" +
+                "            ]\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  },\n" +
+                "  \"success\": 1\n" +
+                "}";
+        Object obj=null;
+        JSONArray jsonObjectRtn = null;
+        JSONArray jsonObjectRtn1 = getWhileLoopChildrens(JSONObject.parseObject(JSONObject.parseObject(josnStrChildrens).get("data").toString()),
+                "children","org_id",obj);
+
+
         String stat = "";
         stat = replace("vehnum_routeid,times_routeid,time,vehnum","time1","times_id",",");
         String  jsonValue ="{\n" +
