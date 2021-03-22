@@ -408,10 +408,10 @@ public class JsonObjectToAttach {
         else {
             rets = new String[whereStr.size() + 1];
             j = 1;
-            //替换表字段，防止特殊字符
+            //替换表字段，防止特殊字符//mysql：`;postgrep："
             String []keys = tm.split(",");
             for(String key:keys){
-                tm = replace(tm,key,"`"+key+"`","");
+                tm = replace(tm,key,"\""+key+"\"","");
             }
             rets[0] = tm;
         }
