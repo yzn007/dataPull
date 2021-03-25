@@ -57,6 +57,7 @@ object SaveModelData {
               //                println(lis(i)+";")
 //              println(string.toString())
               conn.rollback()
+              throw new Exception
             }
           }
         }

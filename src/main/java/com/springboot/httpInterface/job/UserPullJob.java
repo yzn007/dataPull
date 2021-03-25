@@ -45,7 +45,7 @@ public class UserPullJob implements BaseJob {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         String systemCode = JsonObjectToAttach.config.get("systemCode").toString();
-        String integrationKey = JsonObjectToAttach.config.get("integrationKey").toString();
+        String integrationKey = JsonObjectToAttach.config.get("integrationKey").toString()+"1";
         String urlInject = JsonObjectToAttach.config.get("urlInject").toString();
         String conCode = JsonObjectToAttach.config.get("conCode").toString();
         PullUtil pullUtil = new PullUtil(urlInject, conCode);
@@ -54,19 +54,26 @@ public class UserPullJob implements BaseJob {
         //systemCode:对应《6.2术语解释》的SYSTEMCODE，一体化平台申请
         //integrationKey:集成客户端会自动使用MD5加密，由统一身份安全平台提供
         outParam = pullUtil.login(systemCode, integrationKey);
+        String tokenId = outParam.getTokenId();
         if (outParam.getStatus() == 1) {
             System.out.println("登录成功");
         } else {
             System.out.println("登录失败");
             //模拟测试
-//            try {
-//                processPullInfo(null);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
+            try {
+                processPullInfo(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("下拉完成失败，错误详见日志！");
+                if(tokenId!=null && !StringUtils.isEmpty(tokenId)) {
+                    System.out.println("\n注销token开始……");
+                    pullUtil.logout(tokenId);
+                    System.out.println("注销token结束……");
+                }
+            }
             return;
         }
-        String tokenId = outParam.getTokenId();
+
         int i = 0;
         while (true) {
             outParam = pullUtil.pullTask(tokenId);
@@ -85,6 +92,11 @@ public class UserPullJob implements BaseJob {
                 processPullInfo(data.toJSONString());
             } catch (Exception e) {
                 System.out.print(e.toString());
+                System.out.println("下拉完成失败");
+                System.out.println("\n注销token开始……");
+                pullUtil.logout(tokenId);
+                System.out.println("注销token结束……");
+                break;
             }
 
 //            System.out.println("将入库后的id主键返回并赋值给id");
@@ -224,12 +236,14 @@ public class UserPullJob implements BaseJob {
                 SaveDataStatic saveDataStatic = new SaveDataStatic(m.getKey(), tabAndMark == null ? m.getValue() : tabAndMark[0],
                         tabAndMark == null ? "false" : tabAndMark[1], tabAndMark == null ? "false" : tabAndMark[2],
                         listJson);
-                executorService.execute(saveDataStatic);
+//                executorService.execute(saveDataStatic);
+                saveDataStatic.run();
 
 
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+            throw ex;
         }
     }
 }

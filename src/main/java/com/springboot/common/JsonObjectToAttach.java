@@ -319,8 +319,9 @@ public class JsonObjectToAttach {
                                         continue;
 
                                     Map map = new HashMap();
-                                    map.put(e.attribute(0).getStringValue(),e.attribute(1).getValue().substring(e.attribute(1).getValue().indexOf("[list]")+6,
-                                            e.attribute(1).getValue().length()));
+                                    map.put(e.attribute(0).getStringValue(),
+                                                e.attribute(1).getValue().substring(e.attribute(1).getValue().indexOf("[list]")+6,
+                                                    e.attribute(1).getValue().length()));
 
                                     //关联主表Id
                                     map.put("{linkId}",e.attribute(2).getValue());
@@ -328,17 +329,18 @@ public class JsonObjectToAttach {
                                 }
                             else {
                                 Map map = new HashMap();
-                                map.put(e.attribute(0).getStringValue(),e.attribute(1).getValue().substring(e.attribute(1).getValue().indexOf("[list]")+6,
-                                        e.attribute(1).getValue().length()));
+                                map.put(e.attribute(0).getStringValue(),
+                                            e.attribute(1).getValue().substring(e.attribute(1).getValue().indexOf("[list]")+6,
+                                                e.attribute(1).getValue().length()));
                                 //关联主表Id
                                 map.put("{linkId}",e.attribute(2).getValue());
                                 subTabs.add(map);
                             }
 
                         }else
-                            m.put(e.attribute(1).getValue(), e.attribute(0).getValue()+
-                                (!StringUtils.isEmpty(e.getStringValue())?
-                                spChr+e.getStringValue():""));
+                            m.put(e.attribute(1).getValue(),
+                                    e.attribute(0).getValue() + (!StringUtils.isEmpty(e.getStringValue())?
+                                            spChr+e.getStringValue():""));
                     }
                 }
             }
@@ -477,14 +479,30 @@ public class JsonObjectToAttach {
         String[] arrayNew = new String[array.length];
         int i = 0;
         for(String jsonStr :array){
-            JSONObject jsonObject= JSONObject.parseObject(jsonStr);
-            for(Map.Entry keyset:m.entrySet()){
-                if(null!=jsonObject.get(keyset.getValue())){
-                    jsonObject.remove(keyset.getKey());
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = JSONObject.parseObject(jsonStr);
+                for(Map.Entry keyset:m.entrySet()){
+                    if(null!=jsonObject.get(keyset.getValue())){
+                        jsonObject.remove(keyset.getKey());
+                    }
                 }
+                jsonStr = jsonObject.toJSONString();
+                arrayNew[i++] = jsonStr;
+            }catch (Exception e){
+                JSONArray jsonArray = JSONArray.parseArray(jsonStr);
+                JSONArray jsonAarrayTarget = new JSONArray();
+                for(Object o:jsonArray){
+                    JSONObject jsobj = (JSONObject)o;
+                    for(Map.Entry keyset:m.entrySet()){
+                        if(null!=jsonObject.get(keyset.getValue())){
+                            jsobj.remove(keyset.getKey());
+                        }
+                    }
+                    jsonAarrayTarget.add(jsobj);
+                }
+                arrayNew[i++] = jsonAarrayTarget.toJSONString();
             }
-            jsonStr = jsonObject.toJSONString();
-            arrayNew[i++] = jsonStr;
         }
         return arrayNew;
 //        int j = 0;
@@ -716,12 +734,14 @@ public class JsonObjectToAttach {
                 for(int k=1;k<rets.length;k++){
                     String [] vals = rets[k].split("=");
                     String valByKeys = "";
-                    if(keyWhere.get(vals[1].substring(0,vals[1].indexOf("{")).trim())==null){
-                        valByKeys = getValuesByKeys(JSONObject.parseObject(json),vals[1].substring(0,vals[1].indexOf("{")),"");
-                        keyWhere.put(vals[1].substring(vals[1].indexOf("{")+1,vals[1].indexOf("}")),valByKeys);
-                    }else{
-                        valByKeys = keyWhere.get(vals[1].substring(0,vals[1].indexOf("{")).trim()).toString();
-                    }
+//                    if(keyWhere.get(vals[1].substring(0,vals[1].indexOf("{")).trim())==null){
+//                        valByKeys = getValuesByKeys(JSONObject.parseObject(json),vals[1].substring(0,vals[1].indexOf("{")),"");
+                        //keyWhere.put(vals[1].substring(vals[1].indexOf("{")+1,vals[1].indexOf("}")),valByKeys);
+//                    }else{
+//                        valByKeys = keyWhere.get(vals[1].substring(0,vals[1].indexOf("{")).trim()).toString();
+//                    }
+                    valByKeys = getValuesByKeys(JSONObject.parseObject(json),vals[1].substring(0,vals[1].indexOf("{")),"");
+                    keyWhere.put(vals[1].substring(vals[1].indexOf("{")+1,vals[1].indexOf("}")),valByKeys);
                     if(isTruncate){
                         String truncateStr = "truncate " + table;
                         //只清空一次
@@ -766,6 +786,20 @@ public class JsonObjectToAttach {
                 //递归调用
 
                 for (Map.Entry<String,String> e : noContainCols.entrySet()) {
+                    //判断linkId是否包含keyWhere里
+                    if(null==keyWhere.get(tmpLink)){
+                        if(rets.length >1 && rets[1].indexOf(tmpLink)>-1 ){
+                            //取出实际json字串linkId的值
+                            String linkRep = rets[1].substring(rets[1].indexOf("{")+1,rets[1].indexOf("}"));
+                            if(!StringUtils.isEmpty(linkRep)) {
+                                keyWhere.put(tmpLink, JSONObject.parseObject(json).get(linkRep));
+                                //删除父节点的key，以访字节主键跟父节点一样
+                                if (null != keyWhere.get(linkRep))
+                                    keyWhere.remove(linkRep);
+                            }
+
+                        }
+                    }
                     String[] bb = getBatchStatement(getJsonList(json, e.getKey(),false), e.getValue(), null,tmpLink, isModify, keyWhere,isTruncate);
                     if (bb == null) {//子表无数据都返回空
                         return null;
@@ -818,7 +852,7 @@ public class JsonObjectToAttach {
      * @param id key名:org_id
      * @param parentVal 父code值
      */
-    private static JSONArray getWhileLoopChildrens(JSONObject jsonObj,String childrenNodeName,String id,Object parentVal){
+    public static JSONArray getWhileLoopChildrens(JSONObject jsonObj,String childrenNodeName,String id,Object parentVal){
         JSONArray jsonArrayRtn = null;
         if(jsonObj.get(childrenNodeName)!=null)
             while(true){

@@ -2,7 +2,7 @@
 <root>
 
     <!-- 模板配置 -->
-    <!-- 子表配置参数 id:数据库字段名 ref:json字段名 [list]:子表list表名 linkId:关联主表字段-->
+    <!-- 子表配置参数 id:数据库字段名 ref:json字段名 [list]:子表list表名 linkId:关联主表字段 条件值=左边数据库字段，右边json即【ref】字段-->
     <!-- 用户信息 -->
     <table name="GTGCDM.PUB_UNIFIED_IDENTITY_USER">
         <column id="id" ref="systemUserId">id = systemUserId</column>
@@ -42,6 +42,26 @@
         <column id="address" ref="linkAddress"/>
     </table>
 
+    <!-- 设备信息 -->
+    <!-- 服务器-->
+    <table name="GTGCDM.DEV_SERVER_INFO">
+        <column id="server_id" ref="device_id">server_id = device_id</column>
+        <column id="clients" ref="[list]GTGCDM.DEV_CLIENT_INFO" linkId="server_id"/>
+        <column id="name" ref="device_name"/>
+    </table>
+    <!-- 客户端信息 -->
+    <table name="GTGCDM.DEV_CLIENT_INFO">
+        <column id="id" ref="device_id">id = device_id</column>
+        <!--<column id="server_id" ref="serverId"/>-->
+        <column id="name" ref="device_name"/>
+    </table>
+
+    <!-- bbc机构信息 -->
+    <table name="GTGCDM.BBC_ORG_INFO">
+        <column id="id" ref="org_id">id = org_id</column>
+        <column id="parent_id" ref="parent_org_id"/>
+        <column id="name" ref="org_name"/>
+    </table>
 </root>
 
 

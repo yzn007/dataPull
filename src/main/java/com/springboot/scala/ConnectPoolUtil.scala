@@ -36,6 +36,8 @@ object ConnectPoolUtil {
       bs.setMinEvictableIdleTimeMillis(properties.getProperty("MinEvictableIdleTimeMillis").toLong)     //空闲连接60秒中后释放
       bs.setTimeBetweenEvictionRunsMillis(properties.getProperty("TimeBetweenEvictionRunsMillis").toLong)      //5分钟检测一次是否有死掉的线程
       bs.setTestOnBorrow(true)
+      bs.setRemoveAbandoned(true)
+//      bs.setRemoveAbandonedTimeout(300)
     }
     bs
   }

@@ -4,6 +4,7 @@ package com.springboot.httpInterface.controller;
  * Created by yzn00 on 2021/3/16.
  */
 
+import com.springboot.httpInterface.job.BBCJob;
 import com.springboot.httpInterface.job.UserPullJob;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +37,17 @@ public class SchedulerManager {
     //TODO 改成配置文件
     @Value("${cron}")
     public String DEFAULT_CRON;
+    @Value("${cron2}")
+    public String DEFAULT_CRON2;
+    @Value("${job2}")
+    public String JOB2;
+    @Value("${group2}")
+    public String GROUP2;
 
 
     public  void  startJob() throws SchedulerException {
         startJob(DEFAULT_CRON,JOB1,GROUP1, UserPullJob.class);
+        startJob(DEFAULT_CRON2,JOB2,GROUP2, BBCJob.class);
     }
 
 

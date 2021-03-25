@@ -7,6 +7,12 @@
         <!-- 机构信息 -->
         <topic name="ORGANIZATION" table="GTGCDM.PUB_UNIFIED_IDENTITY_ORG" valid="true" textCode="ORGANIZATION" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
     </topics>
+    <topics name="BBCJob">
+       <!-- 设备服务段信息 -->
+        <topic name="SERVER_INFO" table="GTGCDM.DEV_SERVER_INFO" valid="true" textCode="SERVERINFO" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
+        <!-- 机构嵌套信息 -->
+        <topic name="ORG_INFO" table="GTGCDM.BBC_ORG_INFO" valid="true" textCode="ORGINFO" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
+    </topics>
 </root>
 
 

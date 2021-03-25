@@ -95,6 +95,7 @@ final static Logger logger =
             System.out.println(e.toString());
 //            System.out.println(reds.get(0).toString());
 //            System.out.println(listDynamic.get(0));
+            throw e;
         }
 //        }
     }
