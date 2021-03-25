@@ -33,3 +33,7 @@ build/
 ##jar
 out/
 checkpoint*
+
+### 配置文件 ###
+*.yaml
+*.properties
