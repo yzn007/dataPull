@@ -1,5 +1,5 @@
 http:
-  port: 8083
+  port: 8084
 server:
   ssl:
     key-alias: _.chongqingexpo.com
@@ -7,7 +7,7 @@ server:
     key-store-password: 93zgk1o96j
     key-store-type: JKS
     enabled: true
-  port: 10103
+  port: 10104
   tomcat:
     accept-count: 500
     max-threads: 200
@@ -26,12 +26,12 @@ server:
 spring:
     datasource:
         name: test
-        url: jdbc:postgresql://10.2.38.43:5432/bidb
-        username: dm
-        password: dm@1234
+        url: jdbc:mysql://localhost:3307/zhongtie?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+        username: root
+        password: 123456
         # 使用druid数据源
         type: com.alibaba.druid.pool.DruidDataSource
-        driver-class-name: org.postgresql.Driver
+        driver-class-name: com.mysql.jdbc.Driver
         filters: stat
         maxActive: 50
         initialSize: 10
@@ -113,7 +113,11 @@ logging:
 
 job1: job1
 group1: group1
-cron: 0 0/10 * * * ?
+cron: 0 0/3 9-18 * * ?
+
+job2: job2
+group2: group2
+cron2: 0 0/6 * * * ?
 
 
 
