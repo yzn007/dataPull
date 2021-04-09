@@ -62,6 +62,17 @@
         <column id="parent_id" ref="parent_org_id"/>
         <column id="name" ref="org_name"/>
     </table>
+
+    <!-- bbc设备列表 -->
+    <table name="GTGCDM.DEV_LIST_INFO">
+        <column id="device_id" ref="device_id">device_id = device_id</column>
+    </table>
+
+    <!-- bbcb标签列表 -->
+    <table name="GTGCDM.LINE_LABEL_INFO">
+        <column id="client_device_id" ref="client_device_id">client_device_id = client_device_id</column>
+        <column id="server_device_id" ref="server_device_id">server_device_id = server_device_id</column>
+    </table>
 </root>
 
 

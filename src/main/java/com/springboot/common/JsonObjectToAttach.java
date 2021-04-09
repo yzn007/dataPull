@@ -4,6 +4,7 @@ package com.springboot.common;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.springboot.scala.SaveModelData;
+import net.sf.jsqlparser.expression.operators.relational.OldOracleJoinBinaryExpression;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -222,6 +223,14 @@ public class JsonObjectToAttach {
         return m;
     }
 
+    /***
+     * 取得第0：key，1：表，4：是否删除，5：是否清空，7：url（静态isStatic=true）属性
+     * @param propertyNm
+     * @param topicPath
+     * @param code
+     * @param isStatic
+     * @return
+     */
     public static Map<String,String> getValidProperties(String propertyNm,String topicPath,String code,boolean isStatic){
         Map <String,String>m = new HashMap();
         String fileName = "Topic.xml";
@@ -413,7 +422,10 @@ public class JsonObjectToAttach {
             //替换表字段，防止特殊字符//mysql：`;postgrep："
             String []keys = tm.split(",");
             for(String key:keys){
-                tm = replace(tm,key,"\""+key+"\"","");
+                String delimiter = "`";//mysql的列名转义符如`column`
+                if(JsonObjectToAttach.config.get("DriverClassName").toString().toLowerCase().indexOf("postgresql")>-1)
+                    delimiter = "\"";//postgre列名可以用"
+                tm = replace(tm,key,delimiter+key+delimiter,"");
             }
             rets[0] = tm;
         }
@@ -730,51 +742,60 @@ public class JsonObjectToAttach {
                 String column = getColumsOrValues(JSONObject.parseObject(json), true,keyWhere,noContainCols,linkId,null);
                 Map keyMap = new HashMap<String,Map<String,String>>();
                 rets = getPropertyRelation(column, table, null,subTabs,linkId,keyMap);
+                Map keyColumn = new HashMap();
+                for(int k=1;k<rets.length;k++) {
+                    String[] vals = rets[k].split("=");
 
-                for(int k=1;k<rets.length;k++){
-                    String [] vals = rets[k].split("=");
                     String valByKeys = "";
 //                    if(keyWhere.get(vals[1].substring(0,vals[1].indexOf("{")).trim())==null){
 //                        valByKeys = getValuesByKeys(JSONObject.parseObject(json),vals[1].substring(0,vals[1].indexOf("{")),"");
-                        //keyWhere.put(vals[1].substring(vals[1].indexOf("{")+1,vals[1].indexOf("}")),valByKeys);
+                    //keyWhere.put(vals[1].substring(vals[1].indexOf("{")+1,vals[1].indexOf("}")),valByKeys);
 //                    }else{
 //                        valByKeys = keyWhere.get(vals[1].substring(0,vals[1].indexOf("{")).trim()).toString();
 //                    }
-                    valByKeys = getValuesByKeys(JSONObject.parseObject(json),vals[1].substring(0,vals[1].indexOf("{")),"");
-                    keyWhere.put(vals[1].substring(vals[1].indexOf("{")+1,vals[1].indexOf("}")),valByKeys);
-                    if(isTruncate){
+                    valByKeys = getValuesByKeys(JSONObject.parseObject(json), vals[1].substring(0, vals[1].indexOf("{")), "");
+                    keyWhere.put(vals[1].substring(vals[1].indexOf("{") + 1, vals[1].indexOf("}")), valByKeys);
+                    //实际列保存
+                    keyColumn.put(vals[1].substring(vals[1].indexOf("{") + 1, vals[1].indexOf("}")),vals[0]);
+                }
+                if(rets.length>1) {
+                    if (isTruncate) {
                         String truncateStr = "truncate " + table;
                         //只清空一次
-                        if(!att.contains(truncateStr))
+                        if (!att.contains(truncateStr))
                             att.add(truncateStr);
 
-                    }else if (isModify){
+                    } else if (isModify) {
                         String delSt = "delete from " + table + " where 1=1 ";
                         if (!StringUtils.isEmpty(where))
                             delSt += " and " + where;
 
-                        delSt += " and " + vals[0] + " = '" +  valByKeys + "'";
-                        if(!att.contains(delSt))
+                        for(Object e :keyWhere.entrySet()){
+                            Map.Entry<String,Object> m = (Map.Entry<String,Object>)e;
+                            if(null!=keyColumn.get(m.getKey()))
+                                delSt += " and " +keyColumn.get(m.getKey()) + " = '" + m.getValue() + "'";
+                        }
+
+//                        delSt += " and " + vals[0] + " = '" + valByKeys + "'";
+                        if (!att.contains(delSt))
                             att.add(delSt);
                     }
                 }
+                else if(rets.length == 1){
+                    if (isTruncate) {
+                        String truncateStr = "truncate " + table;
+                        //只清空一次
+                        if (!att.contains(truncateStr))
+                            att.add(truncateStr);
 
+                    } else if (isModify) {
+                        String delSt = "delete from " + table + " where 1=1 ";
+                        if (!StringUtils.isEmpty(where))
+                            delSt += " and " + where;
 
-
-                if(isTruncate && rets.length == 1){
-                    String truncateStr = "truncate " + table;
-                    //只清空一次
-                    if(!att.contains(truncateStr))
-                        att.add(truncateStr);
-
-                }
-                else if (isModify && rets.length == 1) {
-                    String delSt = "delete from " + table + " where 1=1 ";
-                    if (!StringUtils.isEmpty(where))
-                        delSt += " and " + where;
-
-                    if(!att.contains(delSt))
-                        att.add(delSt);
+                        if (!att.contains(delSt))
+                            att.add(delSt);
+                    }
                 }
                 //取得json value
                 String values = getColumsOrValues(JSONObject.parseObject(json), false,keyWhere,noContainCols,linkId,keyMap);

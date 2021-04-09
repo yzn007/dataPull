@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.springboot.common.SaveDataStatic;
 import com.springboot.httpInterface.controller.HttpServiceTest;
@@ -40,91 +42,118 @@ public class UserPullJob implements BaseJob {
             topicS = JsonObjectToAttach.getValidProperties(topicName, null, null, true);
 
     }
-
+//    ScheduledExecutorService executorService;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         String systemCode = JsonObjectToAttach.config.get("systemCode").toString();
-        String integrationKey = JsonObjectToAttach.config.get("integrationKey").toString()+"1";
+        String integrationKey = JsonObjectToAttach.config.get("integrationKey").toString();
         String urlInject = JsonObjectToAttach.config.get("urlInject").toString();
         String conCode = JsonObjectToAttach.config.get("conCode").toString();
         PullUtil pullUtil = new PullUtil(urlInject, conCode);
         OutParam outParam = new OutParam();
 
-        //systemCode:对应《6.2术语解释》的SYSTEMCODE，一体化平台申请
-        //integrationKey:集成客户端会自动使用MD5加密，由统一身份安全平台提供
-        outParam = pullUtil.login(systemCode, integrationKey);
-        String tokenId = outParam.getTokenId();
-        if (outParam.getStatus() == 1) {
-            System.out.println("登录成功");
-        } else {
-            System.out.println("登录失败");
-            //模拟测试
-            try {
-                processPullInfo(null);
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("下拉完成失败，错误详见日志！");
-                if(tokenId!=null && !StringUtils.isEmpty(tokenId)) {
-                    System.out.println("\n注销token开始……");
-                    pullUtil.logout(tokenId);
-                    System.out.println("注销token结束……");
-                }
-            }
-            return;
-        }
-
+//        if (executorService == null || executorService.isShutdown() || executorService.isTerminated()) {
+//            executorService = Executors.newSingleThreadScheduledExecutor();
+//            try {
+//                //模拟测试
+//                processPullInfo(null);
+//            }catch (Exception e){
+//            }
+//        }
+//                executorService.scheduleAtFixedRate(saveDataStatic,0,200,TimeUnit.SECONDS);
+        //处理开始
         int i = 0;
-        while (true) {
-            outParam = pullUtil.pullTask(tokenId);
-            if (outParam.getStatus() == 2) {
-                System.out.println("暂时没有数据可以下拉");
-                System.out.println("退出登录");
-                break;
-            } else if (outParam.getStatus() == 0) {
-                System.out.println("拉取数据失败");
-                break;
+        String tokenId = null;
+        try{
+            //systemCode:对应《6.2术语解释》的SYSTEMCODE，一体化平台申请
+            //integrationKey:集成客户端会自动使用MD5加密，由统一身份安全平台提供
+            outParam = pullUtil.login(systemCode, integrationKey);
+            tokenId = outParam.getTokenId();
+            if (outParam.getStatus() == 1) {
+                System.out.println("登录成功");
+            } else {
+                System.out.println("登录失败");
+                //模拟测试
+                try {
+                    if(JsonObjectToAttach.config.get("isTest").toString().toLowerCase().equals("true"))
+                        processPullInfo(null);
+                } catch (Exception e) {
+//                    e.printStackTrace();
+                    _log.error("数据处理异常：{}",outParam,e);
+//                    System.out.println("下拉完成失败，错误详见日志！");
+                    if(tokenId!=null && !StringUtils.isEmpty(tokenId)) {
+                        System.out.println("\n注销token开始……");
+                        pullUtil.logout(tokenId);
+                        System.out.println("注销token结束……");
+                    }
+                    throw e;
+                }
+                return;
             }
-//            System.out.println("业务系统处理数据业务逻辑并入库");
-            JSONObject data = JSONObject.parseObject(outParam.getData().toString());
 
-            try {
-                processPullInfo(data.toJSONString());
-            } catch (Exception e) {
-                System.out.print(e.toString());
-                System.out.println("下拉完成失败");
-                System.out.println("\n注销token开始……");
-                pullUtil.logout(tokenId);
-                System.out.println("注销token结束……");
-                break;
-            }
+            while (true) {
+                outParam = pullUtil.pullTask(tokenId);
+                if (outParam.getStatus() == 2) {
+                    System.out.println("暂时没有数据可以下拉");
+                    System.out.println("退出登录");
+                    break;
+                } else if (outParam.getStatus() == 0) {
+                    System.out.println("拉取数据失败");
+                    break;
+                }
+//            System.out.println("业务系统处理数据业务逻辑并入库");
+                JSONObject data = JSONObject.parseObject(outParam.getData().toString());
+
+                try {
+                    processPullInfo(data.toJSONString());
+                } catch (Exception e) {
+//                    System.out.print(e.toString());
+//                    _log.error("数据处理异常：{}",data,e);
+                    break;
+                }
 
 //            System.out.println("将入库后的id主键返回并赋值给id");
-            String id = "";
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = JSONObject.parseObject(data.toJSONString());
-                id = jsonObject.get("systemOrgId").toString();
-            } catch (Exception ex) {
-                id = jsonObject.get("systemUserId").toString();
-            }
-            outParam = pullUtil.pullFinish(tokenId,outParam.getTaskId(), id);
-            if (outParam.getStatus() == 0) {
-                System.out.println("下拉完成失败");
-                break;
-            } else {
-                System.out.println("\n");
+                String id = "";
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = JSONObject.parseObject(data.toJSONString());
+                    id = jsonObject.get("systemOrgId").toString();
+                } catch (Exception ex) {
+                    id = jsonObject.get("systemUserId").toString();
+                }
+                outParam = pullUtil.pullFinish(tokenId, outParam.getTaskId(), id);
+                if (outParam.getStatus() == 0) {
+                    System.out.println("下拉完成失败");
+                    break;
+                } else {
+                    System.out.println("\n");
 //                System.out.printf("下拉完成成功一条{%d}",i);
+                }
+//                if (i++ >= 20000)//测试20000条
+//                    break;
+                i++;
             }
-            if (i++ >= 200)//测试200条
-                break;
+        }catch (Exception e){
+//            e.printStackTrace();
+            _log.error("数据接入处理异常：{}","",e);
+        }finally {
+//            System.out.printf("\n下拉完成成功{%d}条数据！", i > 0 ? --i : i);
+            _log.info("下拉完成成功{}条数据！",new Object[]{i>0?--i:i});
+            if(tokenId!=null && !StringUtils.isEmpty(tokenId)) {
+                //注销token
+//                System.out.println("\n注销token开始……");
+                _log.info("{}",new Object[]{"注销token开始……"});
+                pullUtil.logout(tokenId);
+//                System.out.println("注销token结束……");
+                _log.info("{}",new Object[]{"注销token结束……"});
+            }
+//            executorService.shutdown();
+//            if(executorService.isShutdown()||executorService.isTerminated()){
+//                _log.info("\n关闭线程：{}\n",new Object[]{executorService});
+////                executorService = null;
+//            }
         }
-        System.out.printf("\n下拉完成成功{%d}条数据！", i>0?--i:i);
-        //注销token
-        System.out.println("\n注销token开始……");
-        pullUtil.logout(tokenId);
-        System.out.println("注销token结束……");
-
     }
 
     /**
@@ -133,7 +162,7 @@ public class UserPullJob implements BaseJob {
      * @throws Exception
      */
     private void processPullInfo(String jsonStr) throws Exception {
-        ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
         try {
             for (Map.Entry<String, String> m : topicS.entrySet()) {
 
@@ -196,10 +225,10 @@ public class UserPullJob implements BaseJob {
                         "  \"effectOn\": \"CREATED\",\n" +
                         "  \"objectType\": \"TARGET_ORGANIZATION\",\n" +
                         "  \"sequence\": 0,\n" +
-                        "  \"_parent\": \"中国铁路工程集团有限公司/中国中铁股份有限公司\",\n" +
-                        "  \"_organization\": \"中国铁路工程集团有限公司/中国中铁股份有限公司/所属分支机构\",\n" +
-                        "  \"name\": \"所属分支机构\",\n" +
-                        "  \"fullname\": \"所属分支机构\",\n" +
+                        "  \"_parent\": \"【测试数据，可以删除】中国铁路工程集团有限公司/中国中铁股份有限公司\",\n" +
+                        "  \"_organization\": \"【测试数据，可以删除】中国铁路工程集团有限公司/中国中铁股份有限公司/所属分支机构\",\n" +
+                        "  \"name\": \"【测试数据，可以删除】所属分支机构\",\n" +
+                        "  \"fullname\": \"【测试数据，可以删除】所属分支机构\",\n" +
                         "  \"isDisabled\": false\n" +
                         "  },\n" +
                         "  \"id\": \"20210310162940633-88D5-C4FEAF2A9\"\n" +
@@ -214,6 +243,8 @@ public class UserPullJob implements BaseJob {
 //                        //插入id
 //                        id = data.get("id").toString();
 //                        jsonObject.put("id", id);
+                        String systemOrgId = jsonObject.get("systemOrgId").toString()+"-%d";
+                        jsonObject.put("systemOrgId", String.format(systemOrgId,new Date().getTime()));
                         //替换bool值
                         JsonObjectToAttach.replaceBooleanString(jsonObject);
 
@@ -222,7 +253,9 @@ public class UserPullJob implements BaseJob {
                         jsonStr = data.toJSONString();
 
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+//                        ex.printStackTrace();
+                        _log.error("处理接入json异常：{}",data,ex);
+                        throw ex;
                     }
                 } else {
                     JSONObject target = JSONObject.parseObject(jsonStr);
@@ -239,10 +272,10 @@ public class UserPullJob implements BaseJob {
 //                executorService.execute(saveDataStatic);
                 saveDataStatic.run();
 
-
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+//            ex.printStackTrace();
+            _log.error("处理接入信息异常：{}",UserPullJob.class.toString(),ex);
             throw ex;
         }
     }

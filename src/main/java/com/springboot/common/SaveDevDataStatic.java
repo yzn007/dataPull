@@ -58,15 +58,15 @@ final static Logger logger =
                     //表名固定了，根据实际情况修改
                     for (int m = 0; m < this.table.split(";").length; m++) {
 
-                        JSONObject jsonObject = null;
-                        try {
-                            String [] jsonArray = JsonObjectToAttach.getJsonList(jsonString, "data",false);
-                            jsonObject = JSONObject.parseObject(jsonArray[0]);
-                            if (jsonObject.get(objectType) != null &&  !jsonObject.get(objectType).equals(JsonObjectToAttach.staticTableRelation.get(this.table.split(";")[m])))
-                                continue;
-                        } catch (Exception exx) {
-
-                        }
+//                        JSONObject jsonObject = null;
+//                        try {
+//                            String [] jsonArray = JsonObjectToAttach.getJsonList(jsonString, "data",false);
+//                            jsonObject = JSONObject.parseObject(jsonArray[0]);
+//                            if (jsonObject.get(objectType) != null &&  !jsonObject.get(objectType).equals(JsonObjectToAttach.staticTableRelation.get(this.table.split(";")[m])))
+//                                continue;
+//                        } catch (Exception exx) {
+//
+//                        }
                         //处理json key重复字段
                         String [] newArray = JsonObjectToAttach.processMutikeys(array,this.table.split(";")[m],"");
 

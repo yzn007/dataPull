@@ -62,9 +62,11 @@ object SaveModelData {
           }
         }
 
-        case et: Exception => println(et)
+        case et: Exception => {
+          println(et)
           conn.rollback()
-
+          throw new Exception
+        }
     } finally {
       conn.close()
     }
