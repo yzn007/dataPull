@@ -53,58 +53,66 @@ public class SecurityUtils {
 
     /**
      * 私钥
-     * 将字符串进行RSA加密
+     * 将字符串进行RSA解密
      *
      * @param text
      * @return
      */
-    public static String encryptBase16(String text,String key) {
+    public static String decryptBase16(String text) {
         String cipherTextBase64 = "";
         try {
 //            Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             PKCS8EncodedKeySpec keySpec = null;
-            if(StringUtils.isEmpty(key))
+//            if(StringUtils.isEmpty(key))
                 keySpec = new PKCS8EncodedKeySpec(Base64.decode(PRIVATE_KEY));
-            else
-                keySpec = new PKCS8EncodedKeySpec(Base64.decode(key));
+//            else
+//                keySpec = new PKCS8EncodedKeySpec(Base64.decode(key));
             PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
             byte[] cipherText = cipher.doFinal(text.getBytes());
             //16进制转字符
-            cipherTextBase64 = bytesToHexString(cipherText).toLowerCase();
+            cipherTextBase64 = bytesToHexString(cipherText);
         } catch (Exception e) {
-            log.info("[字符串进行RSA加密出现异常:{}]", e);
+            log.info("[字符串进行RSA解密出现异常:{}]", e);
         }
         return cipherTextBase64;
     }
 
     /**
      * 公钥
-     * 将字符串进行RSA解密
+     * 将字符串进行RSA加密
      *
      * @param str
      * @return
      */
-    public static String decryptBase16(String str) {
-        byte[] dectyptedText = null;
+    public static String encryptBase16(String str,String publikKey) {
+        String hexEncryPass = "";
         try {
             BASE64Decoder base64Decoder= new BASE64Decoder();
-            byte[] buffer= base64Decoder.decodeBuffer(PUBLIC_KEY);
+//            byte[] buffer= base64Decoder.decodeBuffer(PUBLIC_KEY);
             KeyFactory keyFactory= KeyFactory.getInstance("RSA");
-            X509EncodedKeySpec keySpec= new X509EncodedKeySpec(buffer);
+//            X509EncodedKeySpec keySpec= new X509EncodedKeySpec(buffer);
+            if(StringUtils.isEmpty(publikKey))
+                publikKey = PUBLIC_KEY;
+            X509EncodedKeySpec keySpec=  new X509EncodedKeySpec(Base64.decode(publikKey
+                    .replaceAll("\n","").replaceAll("-----BEGIN PUBLIC KEY-----","")
+                    .replaceAll("-----END PUBLIC KEY-----","")));
 
             PublicKey publickey=keyFactory.generatePublic(keySpec);
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher.init(Cipher.DECRYPT_MODE, publickey);
-            //字符转16进制
-            byte[] text = hexStringToByteArray(str);
-            dectyptedText = cipher.doFinal(text);
+            cipher.init(Cipher.ENCRYPT_MODE, publickey);
+//            //字符转16进制
+//            byte[] text = hexStringToByteArray(str);
+            byte[] text = cipher.doFinal(str.getBytes());
+            //16进制转字符
+            hexEncryPass = bytesToHexString(text).toLowerCase();
+//            dectyptedText = cipher.doFinal(str.getBytes());
         } catch (Exception e) {
-            log.info("[字符串进行RSA解密出现异常:{}]", e);
+            log.info("[字符串进行RSA加密出现异常:{}]", e);
         }
-        return new String(dectyptedText);
+        return hexEncryPass;
     }
 
     /**
