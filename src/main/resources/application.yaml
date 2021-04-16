@@ -94,4 +94,10 @@ logging:
     root: error
     com.springboot.common: info
 
+job1: job1
+group1: group1
+cron: 0 0/10 * * * ?
 
+job2: job2
+group2: group2
+cron2: 0 0/2 * * * ?
