@@ -1,5 +1,7 @@
 package com.springboot.httpInterface.job;
 
+import com.alibaba.druid.sql.ast.statement.SQLIfStatement;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.springboot.common.JsonObjectToAttach;
@@ -8,11 +10,14 @@ import com.springboot.common.SecurityUtils;
 import com.springboot.httpInterface.controller.HttpServiceTest;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.methods.HttpGet;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +36,8 @@ public class BBCJob implements BaseJob {
 
     final String topicName = BBCJob.class.getSimpleName();
 
-    HttpServiceTest httpServiceTest = null;
+    @Autowired
+    HttpServiceTest httpServiceTest;
 
     public BBCJob() {
         if (topicS.size() == 0)
@@ -51,7 +57,7 @@ public class BBCJob implements BaseJob {
     private String getPublicKey() {
         String publicKey = "";
         try {
-            String result = httpServiceTest.sendGet(JsonObjectToAttach.config.get("hostIp").toString() +
+            String result = httpServiceTest.httpGet(JsonObjectToAttach.config.get("hostIp").toString() +
                     JsonObjectToAttach.config.get("publicKeyUrl").toString(), "");
             JSONObject jsonObject = JSONObject.parseObject(result);
             if (jsonObject != null && jsonObject.get("success").equals(1))
@@ -70,19 +76,21 @@ public class BBCJob implements BaseJob {
      *
      * @return
      */
-    private String getAccessedToken() {
-        String accessTokenId = "error：-1";
+    private String getAccessedToken() throws Exception {
+        String accessTokenId = "";
         try {
-            accessTokenId = httpServiceTest.sendGet(JsonObjectToAttach.config.get("hostIp").toString() +
+            accessTokenId = httpServiceTest.httpGet(JsonObjectToAttach.config.get("hostIp").toString() +
                             JsonObjectToAttach.config.get("accessTokenUrl").toString(),
                     "username=" + JsonObjectToAttach.config.get("userName").toString() + "&password=" +
                             SecurityUtils.encryptBase16(JsonObjectToAttach.config.get("password").toString(), getPublicKey()));
             JSONObject token = JSONObject.parseObject(accessTokenId);
             if (null != token && token.get("success").equals(1))
                 accessTokenId = token.get("data").toString();
+            else
+                accessTokenId = "";
         } catch (Exception e) {
             _log.error("获取token出现异常：{}", accessTokenId, e);
-            throw e;
+           throw  e;
         }
         return accessTokenId;
     }
@@ -93,7 +101,23 @@ public class BBCJob implements BaseJob {
 
         //获取token
         if (StringUtils.isEmpty(tokenId))
-            tokenId = getAccessedToken();
+            try {
+                tokenId = getAccessedToken();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        else{
+            try {
+                if(tokenId.indexOf("-")<0){
+                    JSONObject jsonObject = JSONObject.parseObject(tokenId);
+                    if(null!=jsonObject.get("success") && !jsonObject.get("success").toString().equals(1))
+                        tokenId = getAccessedToken();
+                }
+            }catch (Exception ex){
+                _log.info("accesstoken异常：{}",tokenId,ex);
+            }
+        }
+
         try {
             if(JsonObjectToAttach.config.get("isTest").toString().toLowerCase().equals("true"))
                 processBBCInfo(true);
@@ -147,7 +171,7 @@ public class BBCJob implements BaseJob {
                     //处理特殊数据（server：clients嵌套)-状态信息
                     if (tabAndMark[0].toLowerCase().indexOf("dev_server_info") > -1) {
                         jsonStr = "";
-                        jsonStr = httpServiceTest.sendGet(url, "access_token=" + tokenId);
+                        jsonStr = httpServiceTest.httpGet(url, "access_token=" + tokenId);
                         if (isTest && StringUtils.isEmpty(jsonStr))
                             jsonStr = "{\n" +
                                     "  \"data\": {\n" +
@@ -158,17 +182,27 @@ public class BBCJob implements BaseJob {
                                     "            \"status\": 0,\n" +
                                     "            \"conn_status\": 1,\n" +
                                     "            \"device_name\": \"woc223_WOC\",\n" +
-                                    "            \"device_id\": 223\n" +
+                                    "            \"device_id\": 223,\n" +
+                                    "             \"line_type_name\":1\n" +
+                                    "          },\n" +
+                                    "          {\n" +
+                                    "            \"status\": 0,\n" +
+                                    "            \"conn_status\": 1,\n" +
+                                    "            \"device_name\": \"woc223_WOC\",\n" +
+                                    "            \"device_id\": 223,\n" +
+                                    "             \"line_type_name\":2\n" +
                                     "          },\n" +
                                     "          {\n" +
                                     "            \"status\": 0,\n" +
                                     "            \"conn_status\": 2,\n" +
                                     "            \"device_name\": \"woc224_WOC\",\n" +
-                                    "            \"device_id\": 224\n" +
+                                    "            \"device_id\": 224,\n" +
+                                    "             \"line_type_name\":2\n" +
                                     "          }\n" +
                                     "        ],\n" +
                                     "        \"server\": {\n" +
-                                    "          \"status\": 2,\n" +
+                                    "          \"vpn_status\": 2,\n" +
+                                    "          \"acc_status\": 1,\n" +
                                     "          \"device_id\": 221,\n" +
                                     "          \"device_name\": \"woc1_WOC\"\n" +
                                     "        }\n" +
@@ -190,34 +224,43 @@ public class BBCJob implements BaseJob {
                             //server信息
                             JSONObject[] server = new JSONObject[1];
                             JSONArray[] clients = new JSONArray[1];
-                            jsonArray.forEach(c -> {
+//                            jsonArray.forEach(c -> {
+//                                JSONObject jso = (JSONObject) c;
+//                                if (jso.containsKey("server"))
+//                                    server[0] = (JSONObject) jso.get("server");
+//                                if (jso.containsKey("clients"))
+//                                    clients[0] = (JSONArray) jso.get("clients");
+//                            });
+
+                            for( Object c :jsonArray){
                                 JSONObject jso = (JSONObject) c;
                                 if (jso.containsKey("server"))
                                     server[0] = (JSONObject) jso.get("server");
                                 if (jso.containsKey("clients"))
                                     clients[0] = (JSONArray) jso.get("clients");
-                            });
+                                JSONArray jsonArrayTarget = new JSONArray();
+                                for (Object o : clients[0]) {
+                                    JSONObject obj = JSONObject.parseObject(o.toString());
+                                    //替换bool值
+                                    JsonObjectToAttach.replaceBooleanString(obj);
+                                    jsonArrayTarget.add(obj);
+                                }
+                                //重新打包json
+                                jsonObject = new JSONObject();
+                                for (Map.Entry<String, Object> map : server[0].entrySet()) {
+                                    jsonObject.put(map.getKey(), map.getValue());
+                                }
+                                jsonObject.put("clients", jsonArrayTarget);
+                                data.put("data", jsonObject);
+                                target = data;
 
-                            JSONArray jsonArrayTarget = new JSONArray();
-                            for (Object o : clients[0]) {
-                                JSONObject obj = JSONObject.parseObject(o.toString());
                                 //替换bool值
-                                JsonObjectToAttach.replaceBooleanString(obj);
-                                jsonArrayTarget.add(obj);
+                                JsonObjectToAttach.replaceBooleanString(target);
+                                jsonStr = target.toJSONString();
+                                listJson.add(jsonStr);
                             }
-                            //重新打包json
-                            jsonObject = new JSONObject();
-                            for (Map.Entry<String, Object> map : server[0].entrySet()) {
-                                jsonObject.put(map.getKey(), map.getValue());
-                            }
-                            jsonObject.put("clients", jsonArrayTarget);
-                            data.put("data", jsonObject);
-                            target = data;
 
-                            //替换bool值
-                            JsonObjectToAttach.replaceBooleanString(target);
-                            jsonStr = target.toJSONString();
-                            listJson.add(jsonStr);
+
                         }
 
                     } else if (tabAndMark[0].toLowerCase().indexOf("bbc_org_info") > -1) {//机构信息
@@ -228,7 +271,9 @@ public class BBCJob implements BaseJob {
                         bodyMap.put("access_token", tokenId);
                         jsonStr = "";
                         try {
-                            jsonStr = HttpServiceTest.sendPostDataByMap(url, headMap, bodyMap, "utf-8");
+                            //post无参数
+//                            jsonStr = HttpServiceTest.sendPostDataByMap(url+"?"+"access_token="+tokenId, headMap, bodyMap, "utf-8");
+                            jsonStr = HttpServiceTest.httpGet(url,"access_token="+tokenId);
                         } catch (Exception ex) {
                             if (isTest && StringUtils.isEmpty(jsonStr))
                                 jsonStr = "{\n" +
@@ -358,7 +403,7 @@ public class BBCJob implements BaseJob {
                     } else if (tabAndMark[0].toLowerCase().indexOf("dev_list_info") > -1) {
                         //设备信息
                         jsonStr = "";
-                        jsonStr = httpServiceTest.sendGet(url, "access_token=" + tokenId);
+                        jsonStr = httpServiceTest.httpGet(url, "access_token=" + tokenId);
                         if (isTest && StringUtils.isEmpty(jsonStr))
                             jsonStr = "{\n" +
                                     "  \"data\": {\n" +
@@ -398,7 +443,7 @@ public class BBCJob implements BaseJob {
                     } else if (tabAndMark[0].toLowerCase().indexOf("line_label_info") > -1) {
                         //线路标签
                         jsonStr = "";
-                        jsonStr = httpServiceTest.sendGet(url, "access_token=" + tokenId);
+                        jsonStr = httpServiceTest.httpGet(url, "access_token=" + tokenId);
                         if (isTest && StringUtils.isEmpty(jsonStr))
                             jsonStr = "{\n" +
                                     "  \"data\": [\n" +
@@ -434,6 +479,7 @@ public class BBCJob implements BaseJob {
             } catch (Exception ex) {
 //            ex.printStackTrace();
                 _log.error("处理BBC接口异常:[table]{}：",m.getKey(), ex);
+                tokenId = "";
                 throw ex;
             }
         }
