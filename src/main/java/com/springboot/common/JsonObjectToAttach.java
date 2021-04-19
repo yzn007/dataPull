@@ -191,7 +191,6 @@ public class JsonObjectToAttach {
             fileName = topicPath;
 
         try{
-//            String path = ResourceUtils.getURL("classpath:").getPath()+ fileName;
             if(document==null)
                 document = parseDom4j(fileName);
             Element root = document.getRootElement();
@@ -237,11 +236,7 @@ public class JsonObjectToAttach {
         String fileName = "Topic.xml";
         if(!StringUtils.isEmpty(topicPath))
             fileName = topicPath;
-//        String path = Thread.currentThread().getClass().getResource("/").getPath() + fileName;
-
-
         try{
-//            String path = ResourceUtils.getURL("classpath:").getPath()+ fileName;
             if(document==null)
                 document = parseDom4j(fileName);
             Element root = document.getRootElement();
@@ -302,9 +297,6 @@ public class JsonObjectToAttach {
         Map<String, String> m = new HashMap();
 
         try {
-
-//            String path = Thread.currentThread().getClass().getResource("/").getPath() + fileName;
-//            String path = ResourceUtils.getURL("classpath:").getPath()+fileName;
             if(tplDocument==null)
                 tplDocument = parseDom4j(fileName);
             Element root = tplDocument.getRootElement();
@@ -321,9 +313,7 @@ public class JsonObjectToAttach {
                     for (Element e : tblEle.elements()) {
                         //存在子表
                         if(e.attribute(1).getValue().indexOf("[list]")>-1){//子表列处理
-//                            if(subTabs.size()>0) {
                             isContain = false;
-//                            if(null!=subTabs)
                             for(Map<String,String> sub:subTabs){
                                 if(null!=sub.get(e.attribute(0).getStringValue())){
                                     isContain = true;
@@ -341,33 +331,6 @@ public class JsonObjectToAttach {
                                 map.put("{linkId}",e.attribute(2).getValue());
                                 subTabs.add(map);
                             }
-//                                for(Map mp :subTabs){
-//                                    if(mp.get(e.attribute(0).getStringValue())!=null)
-//                                        continue;
-//
-//                                    Map map = new HashMap();
-//                                    map.put(e.attribute(0).getStringValue(),
-//                                                e.attribute(1).getValue().substring(e.attribute(1).getValue().indexOf("[list]")+6,
-//                                                    e.attribute(1).getValue().length()));
-//
-//                                    //关联主表Id
-//                                    map.put("{linkId}",e.attribute(2).getValue());
-//                                    subTabs.add(map);
-//                                }
-//                            }
-//                            else {
-//                                Map map = new HashMap();
-//                                map.put(e.attribute(0).getStringValue(),
-//                                            e.attribute(1).getValue().substring(e.attribute(1).getValue().indexOf("[list]")+6,
-//                                                e.attribute(1).getValue().length()));
-//                                //关联主表Id
-//                                map.put("{linkId}",e.attribute(2).getValue());
-//                                subTabs.add(map);
-//                            }
-//                            //判断是否包含linkId,并置入特殊标记
-//                            if(null==m.get(e.attribute(2).getValue())){
-//                                m.put(e.attribute(2).getValue(),"%$*Link Id*$%");
-//                            }
                         }else//普通列处理
                             //{json对应的key，数据库列名(+#+条件或"")}
                             m.put(e.attribute(1).getValue(),
@@ -377,9 +340,6 @@ public class JsonObjectToAttach {
                 }
             }
 
-//            Map<String,Map<String,String>> mapKeys = new HashMap<>();
-//            if(mapKeys==null)
-//                mapKeys = new HashMap<String,Map<String,String>>();
             for (Map.Entry<String, String> e : m.entrySet()) {//处理普通列的where从句
                 String value = e.getValue().toLowerCase();
                 if(e.getValue().indexOf(spChr)>-1){
@@ -388,143 +348,17 @@ public class JsonObjectToAttach {
                     //小写的column名
                     value = value.split(spChr)[0];
                 }
-//                if(e.getKey().indexOf(".")>0){//处理json的key中有.的情况，如：OwnRoute.Name，实际：key是.后的字段Name，前面的是子表名：OwnRoute
-//                    String key = e.getKey().substring(0,e.getKey().indexOf("."));
-                    //判断是否包括该列（下一个字符为逗号或空，为最后一个字段）
-//                    if(tm.indexOf(key.toLowerCase())>-1 && (tm.substring(tm.indexOf(key.toLowerCase())+
-//                                           key.length(),tm.indexOf(key.toLowerCase())+key.length()+1>tm.length()?
-//                                            tm.length():
-//                                            tm.indexOf(key.toLowerCase())+key.length()+1).equals(",")||
-//                           StringUtils.isEmpty(tm.substring(tm.indexOf(key.toLowerCase())+key.length(),
-//                                   tm.indexOf(key.toLowerCase())+key.length()+1>tm.length()?
-//                                           tm.length():tm.indexOf(key.toLowerCase())+key.length()+1))
-//                    ))
-//                    if(cols.containsKey(key.toLowerCase())){
-//                        if(mapKeys.get(key)==null){//判断是否存在子表名
-//                            Map mp = new HashMap();
-//                            mp.put(e.getKey().substring(key.length()+1,e.getKey().length()),e.getValue());
-//                            mapKeys.put(key,mp);
-//                        }else{
-//                            Map mp = mapKeys.get(key);
-//                            mp.put(e.getKey().substring(key.length()+1,e.getKey().length()),e.getValue());
-//                            mapKeys.put(key,mp);
-//                        }
-//                    }
-//                }
-//                else if(!linkId.equals(e.getKey())) {//已经处理过的linkId存在跳过
-////                    tm = tm.toLowerCase().replace(e.getKey().toLowerCase(),value);
-//                    tm = replace(tm.toLowerCase(),e.getKey().toLowerCase(),value,"");
-//                }
-//                else if(tm.lastIndexOf(e.getKey())>0 && linkId.equals(e.getKey())){
-//                    //跳过linkId
-//                    String tmpS = tm.substring(linkId.length(),tm.length());
-////                    tmpS = tmpS.toLowerCase().replace(e.getKey().toLowerCase(),value);
-//                    //替换成实际column名，最前面拼上linkId
-//                    tmpS =replace(tmpS.toLowerCase(),e.getKey().toLowerCase(),value,"");
-//                    tm = tm.substring(0,linkId.length())+tmpS;
-//                }
-//                //json对应为为实际的列名
-
+                //json对应为为实际的列名
                 cols.put(e.getKey(),value);
-
-
-//                }
             }
-
-//            //处理存在LinkId的情况
-//            int i= 0;
-//            while(true){
-//                String ky = "";
-//                for(Object o:cols.entrySet()){
-//                    Map.Entry mo = (Map.Entry)o;
-//                    //查找linkID根据特殊标记
-//                    if(mo.getValue().toString().equalsIgnoreCase("%$*Link Id*$%")){
-//                        ky = mo.getKey().toString();
-//                        break;
-//                    }
-//                }
-//                //找到实际的字段
-//                String actulKey = "";
-//                if(!StringUtils.isEmpty(ky))
-//                    for(Object o:cols.entrySet()){
-//                        Map.Entry mo = (Map.Entry)o;
-//                        if(mo.getValue().toString().equals(ky)){
-//                            actulKey = mo.getKey().toString();
-//                            break;
-//                        }
-//                    }
-//
-//                if(StringUtils.isEmpty(ky))
-//                    break;
-//                else if(!StringUtils.isEmpty(actulKey))
-//                    cols.remove(ky);
-//                if(i++>10) {//防止错误设置找不到linkId的key死循环
-////                        throw new Exception("\n\nsetting linkID error!\n\n");
-//                    //默认跟数据库字段一致
-//                    cols.put(ky,ky);
-//                    break;
-//                }
-//            }
-
-
-//            for(Map.Entry<String,Map<String,String>> mp:mapKeys.entrySet()){//处理包含.的列名
-                //判断是否包含该列，包含条件为后一位字符为","或空
-//                if(tm.indexOf(mp.getKey().toLowerCase())>-1 && (tm.substring(tm.indexOf(mp.getKey().toLowerCase())+ mp.getKey().length(),
-//                                tm.indexOf(mp.getKey().toLowerCase())+
-//                                        mp.getKey().length()+1>tm.length()?
-//                                            tm.length():
-//                                            tm.indexOf(mp.getKey().toLowerCase())+ mp.getKey().length()+1).equals(",")||
-//                        StringUtils.isEmpty(tm.substring(tm.indexOf(mp.getKey().toLowerCase())+ mp.getKey().length(),
-//                                tm.indexOf(mp.getKey().toLowerCase())+
-//                                        mp.getKey().length()+1>tm.length()?
-//                                            tm.length():
-//                                            tm.indexOf(mp.getKey().toLowerCase())+ mp.getKey().length()+1)))){
-//                    Map <String,String>val = mp.getValue();
-//                    if(!cols.containsKey(mp.getKey()))
-//                        continue;
-//                    //删除子表标志符
-//                    cols.remove(mp.getKey());
-//                    String replacStr = "";
-//                    for(Map.Entry<String,String> v:val.entrySet()){
-////                        replacStr += v.getValue() +",";
-//                       cols.put(mp.getKey()+"."+v.getKey().toLowerCase(),v.getValue().toLowerCase());
-//                    }
-//                    if(!StringUtils.isEmpty(replacStr)){
-//                        replacStr = replacStr.substring(0,replacStr.length()-1);
-////                        tm = tm.replace(mp.getKey().toLowerCase(),replacStr);
-//                        tm = replace(tm,mp.getKey().toLowerCase(),replacStr,"");
-//                    }
-//                }
-//            }
-
-//            System.out.println(tm);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         int j = 0;
-//        if(StringUtils.isEmpty(tm)) {
-            rets = new String[whereStr.size()];
-//        }
-//        else {
-//            rets = new String[whereStr.size() + 1];
-//            j = 1;
-//            //替换表字段，防止特殊字符//mysql：`;postgrep："
-//            String []keys = tm.split(",");
-//            for(String key:keys){
-//                String delimiter = "`";//mysql的列名转义符如`column`
-//                if(JsonObjectToAttach.config.get("DriverClassName").toString().toLowerCase().indexOf("postgresql")>-1)
-//                    delimiter = "\"";//postgre列名可以用"
-//                tm = replace(tm,key,delimiter+key+delimiter,"");
-//            }
-//            rets[0] = tm;
-//        }
+        rets = new String[whereStr.size()];
 
         for( ;j<rets.length;j++){
-//            if(StringUtils.isEmpty(tm))
-                rets [j] = whereStr.get(j);
-//            else
-//                rets [j] = whereStr.get(j-1);
+            rets [j] = whereStr.get(j);
         }
         Map properites = new HashMap();
         properites.put("rets",rets);
@@ -552,8 +386,6 @@ public class JsonObjectToAttach {
 
         try {
 
-//            String path = Thread.currentThread().getClass().getResource("/").getPath() + fileName;
-//            String path = ResourceUtils.getURL("classpath:").getPath()+fileName;
             if(tplDocument==null)
                 tplDocument = parseDom4j(fileName);
             Element root = tplDocument.getRootElement();
@@ -574,8 +406,6 @@ public class JsonObjectToAttach {
                     }
                 }
             }
-
-//
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -610,28 +440,6 @@ public class JsonObjectToAttach {
             }
         }
         return arrayNew;
-//        int j = 0;
-//        if(StringUtils.isEmpty(tm)) {
-//            rets = new String[whereStr.size()];
-//        }
-//        else {
-//            rets = new String[whereStr.size() + 1];
-//            j = 1;
-//            //替换表字段，防止特殊字符
-//            String []keys = tm.split(",");
-//            for(String key:keys){
-//                tm = replace(tm,key,"`"+key+"`","");
-//            }
-//            rets[0] = tm;
-//        }
-//
-//        for( ;j<rets.length;j++){
-//            if(StringUtils.isEmpty(tm))
-//                rets [j] = whereStr.get(j);
-//            else
-//                rets [j] = whereStr.get(j-1);
-//        }
-//        return m;
     }
 
     /**
@@ -694,53 +502,7 @@ public class JsonObjectToAttach {
      * @param keyValueMap
      * @return
      */
-
-
     public static Map getColumsOrValues(JSONObject jsonObject, Map ky,Map noContains,String linkId,Map <String,Object>keyValueMap) {
-//        String[] a = new String[1];
-//
-//        if(!StringUtils.isEmpty(linkId))
-//            if(isCol)
-//                a[0] = linkId+",";
-//            else
-//                a[0] = ky.get(linkId)+",";
-//        if(noContains.get("linkId")!= null && StringUtils.isEmpty(linkId))//设置linkId为空
-//            noContains.put("linkId","");
-//        jsonObject.entrySet().iterator().forEachRemaining(s ->
-//                a[0] = (!StringUtils.isEmpty(a[0]) ? a[0] : "") + (noContains.get(s.getKey().toString())!=null?"":
-//                        (isCol ?  s.getKey() : ky.get(s.getKey())==null|| (!ky.get(s.getKey()).equals(linkId) && !StringUtils.isEmpty(linkId)
-//                        )?(s.getValue().toString().indexOf(";")<0?s.getValue().toString().replaceAll(",","，")
-//                                :s.getValue().toString()):
-//                                (ky.get(s.getKey()).toString().indexOf(";")<0?ky.get(s.getKey()).toString().replaceAll(",","，")
-//                                        :ky.get(s.getKey()))  ) + ","));
-//
-//        if(!isCol) {
-//
-//            for (Map.Entry<String, Map<String, String>> m : keyValueMap.entrySet()) {
-//                if (jsonObject.get(m.getKey())!=null) {
-//                    Map<String, String> val = m.getValue();
-//                    String values = "";
-//                    JSONObject josnM = JSONObject.parseObject(jsonObject.get(m.getKey()).toString());
-//                    for (Map.Entry<String, String> v : val.entrySet()) {
-//                        String value = "";
-//                        try{
-//                            value = josnM.get(v.getKey()).toString();
-//                        }catch (Exception ee){
-//                            System.out.println("error【"+v.getKey()+"】:" +josnM);
-//                            return null;
-//                        }
-//                        values += value + ",";
-//                    }
-//                    String subStr = jsonObject.get(m.getKey()).toString().replaceAll(",","，");
-//                    String head = a[0].substring(0,a[0].indexOf(subStr)+subStr.length());
-//                    String tail = a[0].substring(a[0].indexOf(subStr)+subStr.length(),a[0].length());
-////                    head = head.replace(subStr,values.substring(0,values.length()-1));
-//                    head = replace(head,subStr,values.substring(0,values.length()-1),"#");
-//                    a[0] = head + tail;
-//                }
-//            }
-//        }
-//        return a[0].substring(0, a[0].length() - 1).replaceAll("'","\\\\'\r");
         Map colums = new HashMap();
         for(int j=0;j<linkId.split(",").length;j++){
             String linkIdSl = linkId.split(",")[j];
@@ -873,7 +635,6 @@ public class JsonObjectToAttach {
      */
     public static String[] getBatchStatement(String[] jsons, String table,String where, String linkId, boolean isModify,Map keyWhere,boolean isTruncate) {
         List<String> att = new ArrayList<>();
-//        Map keyWhere = new HashMap();
         String[] ret = null;
         if (jsons == null || jsons.length <= 0)
             return null;
@@ -894,9 +655,6 @@ public class JsonObjectToAttach {
                 }
             }
 //            //取得json key
-//            String column = getColumsOrValues(JSONObject.parseObject(jsons[0]), true,keyWhere,noContainCols,linkId,null);
-//            Map keyMap = new HashMap<String,Map<String,String>>();
-//            rets = getPropertyRelation(column, table, null,subTabs,linkId,keyMap);
             if(null != properties.get("cols"))
                 columnSet = (Map)properties.get("cols");
             String []rets = {};
@@ -905,38 +663,6 @@ public class JsonObjectToAttach {
             for (String json : jsons) {
                 Map column = getColumsOrValues(JSONObject.parseObject(json), keyWhere, noContainCols, linkId, columnSet);
 
-//                Map keyMap = new HashMap<String,Map<String,String>>();
-//                properties = getPropertyRelation(table, null,subTabs,linkId);
-//                Map keyColumn = new HashMap();
-//                for(int k=0;k<rets.length;k++) {//实际格式：字段1=值1{json的key}
-//                    String[] vals = rets[k].split("=");
-//
-//                    String valByKeys = "";
-////                    if(keyWhere.get(vals[1].substring(0,vals[1].indexOf("{")).trim())==null){
-////                        valByKeys = getValuesByKeys(JSONObject.parseObject(json),vals[1].substring(0,vals[1].indexOf("{")),"");
-//                    //keyWhere.put(vals[1].substring(vals[1].indexOf("{")+1,vals[1].indexOf("}")),valByKeys);
-////                    }else{
-////                        valByKeys = keyWhere.get(vals[1].substring(0,vals[1].indexOf("{")).trim()).toString();
-////                    }
-//                    valByKeys = getValuesByKeys(JSONObject.parseObject(json), vals[1].substring(0, vals[1].indexOf("{")), "");
-//                    for(int j=0;j<linkId.split(",").length;j++){//linkId多个用,分割开来
-//                        String linkIdSl = linkId.split(",")[j];
-//
-//                        if((StringUtils.isEmpty(valByKeys )|| "null".equals(valByKeys)) && vals[0].toString().trim().equals(columnSet.get(linkIdSl))) {
-//
-////                        if (!vals[0].toString().trim().equals(linkId) && columnSet.containsKey(linkId)) {//子表的linkId与父不一致
-////                            //添加实际的linkId对应字段
-////                            keyWhere.put(vals[1].substring(vals[1].indexOf("{") + 1, vals[1].indexOf("}")), keyWhere.get(linkId));
-////                        }
-////                        else
-//                                keyWhere.put(vals[1].substring(vals[1].indexOf("{") + 1, vals[1].indexOf("}")), column.get(column.get(columnSet.get(linkIdSl))));
-//                        }else
-//                            keyWhere.put(vals[1].substring(vals[1].indexOf("{") + 1, vals[1].indexOf("}")), valByKeys);
-//                    }
-//
-////                    //实际列保存
-////                    keyColumn.put(vals[1].substring(vals[1].indexOf("{") + 1, vals[1].indexOf("}")),vals[0]);
-//                }
                 if(rets.length>0) {
                     if (isTruncate) {
                         String truncateStr = "truncate " + table;
@@ -949,14 +675,6 @@ public class JsonObjectToAttach {
                         if (!StringUtils.isEmpty(where))
                             delSt += " and " + where;
 
-//                        for(Object e :keyWhere.entrySet()){
-//                            Map.Entry<String,Object> m = (Map.Entry<String,Object>)e;
-////                            if(null!=keyColumn.get(m.getKey()))
-////                                delSt += " and " +keyColumn.get(m.getKey()) + " = '" + m.getValue() + "'";
-//                            if(null!=columnSet.get(m.getKey()))
-//                                delSt += " and " + columnSet.get(m.getKey()) + " = '" + m.getValue() + "'";
-//                        }
-
                         for(int k=0;k<rets.length;k++) {//实际格式：字段1=值1{json的key}
                             String colNm = rets[k].split("=")[0].trim();
 
@@ -964,7 +682,6 @@ public class JsonObjectToAttach {
 
                         }
 
-//                        delSt += " and " + vals[0] + " = '" + valByKeys + "'";
                         if (!att.contains(delSt))
                             att.add(delSt);
                     }
