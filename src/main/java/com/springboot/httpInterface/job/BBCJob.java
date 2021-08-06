@@ -231,7 +231,7 @@ public class BBCJob implements BaseJob {
 //                                if (jso.containsKey("clients"))
 //                                    clients[0] = (JSONArray) jso.get("clients");
 //                            });
-
+                            int number = 0;
                             for( Object c :jsonArray){
                                 JSONObject jso = (JSONObject) c;
                                 if (jso.containsKey("server"))
@@ -244,6 +244,7 @@ public class BBCJob implements BaseJob {
                                     //替换bool值
                                     JsonObjectToAttach.replaceBooleanString(obj);
                                     jsonArrayTarget.add(obj);
+                                    number++;
                                 }
                                 //重新打包json
                                 jsonObject = new JSONObject();
@@ -259,8 +260,8 @@ public class BBCJob implements BaseJob {
                                 jsonStr = target.toJSONString();
                                 listJson.add(jsonStr);
                             }
-
-
+                            _log.info("----获取设备连接状态数据 服务器的数量-----"+jsonArray.size());
+                            _log.info("----获取设备连接状态数据 客户端的数量-----"+number);
                         }
 
                     } else if (tabAndMark[0].toLowerCase().indexOf("bbc_org_info") > -1) {//机构信息
@@ -399,7 +400,10 @@ public class BBCJob implements BaseJob {
                                 JsonObjectToAttach.replaceBooleanString(jsonObject);
                                 listJson.add(jsonObject.toString());
                             }
+
                         }
+                        _log.info("-----获取机构信息数据共计------"+listJson.size()+"条");
+
                     } else if (tabAndMark[0].toLowerCase().indexOf("dev_list_info") > -1) {
                         //设备信息
                         jsonStr = "";
@@ -440,35 +444,8 @@ public class BBCJob implements BaseJob {
                                 listJson.add(jsonObject.toString());
                             }
                         }
-                    } else if (tabAndMark[0].toLowerCase().indexOf("line_label_info") > -1) {
-                        //线路标签
-                        jsonStr = "";
-                        jsonStr = httpServiceTest.httpGet(url, "access_token=" + tokenId);
-                        if (isTest && StringUtils.isEmpty(jsonStr))
-                            jsonStr = "{\n" +
-                                    "  \"data\": [\n" +
-                                    "    {\n" +
-                                    "      \"client_device_id\": 3,\n" +
-                                    "      \"server_device_id\": 2,\n" +
-                                    "      \"line_type_name\": 2\n" +
-                                    "    }\n" +
-                                    "  ],\n" +
-                                    "  \"success\": 1\n" +
-                                    "}";
-                        JSONObject data = JSONObject.parseObject(jsonStr);
-                        if (data != null && data.get("success").equals(1)) {
-
-                            JSONArray jsonArray = JSONArray.parseArray(data.get("data").toString());
-
-                            for (Object o : jsonArray) {
-                                JSONObject jsonObject = (JSONObject) o;
-                                //替换bool值
-                                JsonObjectToAttach.replaceBooleanString(jsonObject);
-                                listJson.add(jsonObject.toString());
-                            }
-                        }
+                        _log.info("-----获取设备信息数据共计------"+listJson.size()+"条");
                     }
-
 
                 SaveDevDataStatic saveDataStatic = new SaveDevDataStatic(m.getKey(), tabAndMark == null ? m.getValue() : tabAndMark[0],
                         tabAndMark == null ? "false" : tabAndMark[1], tabAndMark == null ? "false" : tabAndMark[2],
