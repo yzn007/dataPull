@@ -46,7 +46,7 @@ public class SchedulerManager {
 
 
     public  void  startJob() throws SchedulerException {
-        startJob(DEFAULT_CRON,JOB1,GROUP1, UserPullJob.class);
+        //startJob(DEFAULT_CRON,JOB1,GROUP1, UserPullJob.class);
         startJob(DEFAULT_CRON2,JOB2,GROUP2, BBCJob.class);
     }
 

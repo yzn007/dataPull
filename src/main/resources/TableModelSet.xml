@@ -4,7 +4,7 @@
     <!-- 模板配置 -->
     <!-- 子表配置参数 id:数据库字段名 ref:json字段名 [list]:子表list表名 linkId:关联主表字段 条件值=左边数据库字段，右边json即【ref】字段-->
     <!-- 用户信息 -->
-    <table name="GTGCDM.PUB_UNIFIED_IDENTITY_USER">
+    <table name="ODS.PUB_UNIFIED_IDENTITY_USER">
         <column id="id" ref="systemUserId">id = systemUserId</column>
         <column id="username" ref="_user"/>
         <column id="organization" ref="_organization"/>
@@ -29,7 +29,7 @@
     </table>
 
     <!-- 机构信息 -->
-    <table name="GTGCDM.PUB_UNIFIED_IDENTITY_ORG">
+    <table name="ODS.PUB_UNIFIED_IDENTITY_ORG">
         <column id="id" ref="systemOrgId">id = systemOrgId</column>
         <column id="parent_Id" ref="_parent"/>
         <column id="org_name" ref="_organization"/>
@@ -44,34 +44,28 @@
 
     <!-- 设备信息 -->
     <!-- 服务器-->
-    <table name="GTGCDM.DEV_SERVER_INFO">
+    <table name="ODS.O_A00_50_SXF_DEV_SERVER_INFO">
         <column id="server_id" ref="device_id">server_id = device_id</column>
-        <column id="clients" ref="[list]GTGCDM.DEV_CLIENT_INFO" linkId="server_id"/>
+        <column id="clients" ref="[list]ODS.O_A00_50_SXF_DEV_CLIENT_INFO" linkId="server_id"/>
         <column id="name" ref="device_name"/>
     </table>
     <!-- 客户端信息 -->
-    <table name="GTGCDM.DEV_CLIENT_INFO">
+    <table name="ODS.O_A00_50_SXF_DEV_CLIENT_INFO">
         <column id="id" ref="device_id">id = device_id</column>
         <!--<column id="server_id" ref="serverId"/>-->
         <column id="name" ref="device_name"/>
     </table>
 
     <!-- bbc机构信息 -->
-    <table name="GTGCDM.BBC_ORG_INFO">
+    <table name="ODS.O_A00_50_SXF_BBC_ORG_INFO">
         <column id="id" ref="org_id">id = org_id</column>
         <column id="parent_id" ref="parent_org_id"/>
         <column id="name" ref="org_name"/>
     </table>
 
     <!-- bbc设备列表 -->
-    <table name="GTGCDM.DEV_LIST_INFO">
+    <table name="ODS.O_A00_50_SXF_DEV_LIST_INFO">
         <column id="device_id" ref="device_id">device_id = device_id</column>
-    </table>
-
-    <!-- bbcb标签列表 -->
-    <table name="GTGCDM.LINE_LABEL_INFO">
-        <column id="client_device_id" ref="client_device_id">client_device_id = client_device_id</column>
-        <column id="server_device_id" ref="server_device_id">server_device_id = server_device_id</column>
     </table>
 </root>
 

@@ -615,8 +615,8 @@ public class JsonObjectToAttach {
 
     static final Map staticTableRelation = new HashMap(){
         {
-            put("GTGCDM.PUB_UNIFIED_IDENTITY_USER","TARGET_ACCOUNT");
-            put("GTGCDM.PUB_UNIFIED_IDENTITY_ORG","TARGET_ORGANIZATION");
+            put("STAGE.PUB_UNIFIED_IDENTITY_USER","TARGET_ACCOUNT");
+            put("STAGE.PUB_UNIFIED_IDENTITY_ORG","TARGET_ORGANIZATION");
         }
 
     };

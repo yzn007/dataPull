@@ -3,19 +3,17 @@
     <!-- topic列表： 名称 表名(多表用;分割) 是否有效 编码(多个用;分割) 是否删除后再插入 是否清空表 是否静态数据 静态数据访问url-->
     <topics name="UserPullJob">
         <!-- 用户信息 -->
-        <topic name="USER_INFO" table="GTGCDM.PUB_UNIFIED_IDENTITY_USER" valid="true" textCode="USERINFO" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
+        <topic name="USER_INFO" table="ODS.PUB_UNIFIED_IDENTITY_USER" valid="true" textCode="USERINFO" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
         <!-- 机构信息 -->
-        <topic name="ORGANIZATION" table="GTGCDM.PUB_UNIFIED_IDENTITY_ORG" valid="true" textCode="ORGANIZATION" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
+        <topic name="ORGANIZATION" table="ODS.PUB_UNIFIED_IDENTITY_ORG" valid="true" textCode="ORGANIZATION" isDelete="true" isTruncate="false" isStatic="true" url="http://183.66.65.155:9002/api/Token?appid=001&amp;secret=ABCDEFG"/>
     </topics>
     <topics name="BBCJob">
         <!-- 设备信息 -->
-        <topic name="DEV_LIST_INFO" table="GTGCDM.DEV_LIST_INFO" valid="true" textCode="SERVERINFO" isDelete="true" isTruncate="false" isStatic="true" url="/bbc/api/v1/get_device_list/"/>
+        <topic name="DEV_LIST_INFO" table="ODS.O_A00_50_SXF_DEV_LIST_INFO" valid="true" textCode="SERVERINFO" isDelete="true" isTruncate="false" isStatic="true" url="/bbc/api/v1/get_device_list/"/>
         <!-- 设备链接状态信息 -->
-        <topic name="DEV_SERVER_INFO" table="GTGCDM.DEV_SERVER_INFO" valid="true" textCode="LINKSTATUS" isDelete="true" isTruncate="false" isStatic="true" url="/bbc/api/v1/get_link_status/"/>
-        <!-- 线路标签信息 -->
-        <topic name="LINE_LABEL_INFO" table="GTGCDM.LINE_LABEL_INFO" valid="true" textCode="LINELABEL" isDelete="true" isTruncate="false" isStatic="true" url="/bbc/api/v1/get_line_lable/"/>
+        <topic name="DEV_SERVER_INFO" table="ODS.O_A00_50_SXF_DEV_SERVER_INFO" valid="true" textCode="LINKSTATUS" isDelete="true" isTruncate="false" isStatic="true" url="/bbc/api/v1/get_link_status/"/>
         <!-- 机构嵌套信息 -->
-        <topic name="ORG_INFO" table="GTGCDM.BBC_ORG_INFO" valid="true" textCode="ORGINFO" isDelete="true" isTruncate="false" isStatic="true" url="/bbc/api/v1/get_org_tree/"/>
+        <topic name="ORG_INFO" table="ODS.O_A00_50_SXF_BBC_ORG_INFO" valid="true" textCode="ORGINFO" isDelete="true" isTruncate="false" isStatic="true" url="/bbc/api/v1/get_org_tree/"/>
     </topics>
 </root>
 

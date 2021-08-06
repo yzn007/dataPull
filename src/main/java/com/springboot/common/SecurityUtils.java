@@ -94,8 +94,7 @@ public class SecurityUtils {
 //            byte[] buffer= base64Decoder.decodeBuffer(PUBLIC_KEY);
             KeyFactory keyFactory= KeyFactory.getInstance("RSA");
 //            X509EncodedKeySpec keySpec= new X509EncodedKeySpec(buffer);
-            if(StringUtils.isEmpty(publikKey))
-                publikKey = PUBLIC_KEY;
+            if(StringUtils.isEmpty(publikKey)){publikKey = PUBLIC_KEY;}
             X509EncodedKeySpec keySpec=  new X509EncodedKeySpec(Base64.decode(publikKey
                     .replaceAll("\n","").replaceAll("-----BEGIN PUBLIC KEY-----","")
                     .replaceAll("-----END PUBLIC KEY-----","")));
